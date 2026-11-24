@@ -163,6 +163,7 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
 .tab-fixed{font-size:6.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;line-height:1;margin-top:3px;padding:1.5px 3px 1px;border-radius:3px;background:#fff;color:#C62828}
 .drag-handle.pin{cursor:default;color:inherit;font-size:11px}
 .tab-proposed{opacity:.88;font-style:italic}
+.tab-conf{width:20px;height:20px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;margin-bottom:4px}
 .tab-none{font-size:8px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;line-height:1.25;opacity:.9}
 
 .card-body{flex:1;padding:7px 6px 7px 10px;min-width:0;display:flex;gap:8px;align-items:stretch}
@@ -734,16 +735,14 @@ const DP = [
   {id:"g2",dateType:"fixed",date:"2027-09-18",type:"social",cat:"Event",postType:"Reel",title:"Conference day! (Sept)",purpose:"Day-of post. Welcome everyone.",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:"",order:2},
 ];
 const V8_POSTS = [
-  {id:"v8-auth-01",dateType:"premar1",date:"",type:"social",cat:"Speaker",postType:"",title:"Speaker post 1",purpose:"",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:""},
-  {id:"v8-auth-02",dateType:"premar1",date:"",type:"social",cat:"Speaker",postType:"",title:"Speaker post 2",purpose:"",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:""},
-  {id:"v8-auth-03",dateType:"premar1",date:"",type:"social",cat:"Speaker",postType:"",title:"Speaker post 3",purpose:"",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:""},
-  {id:"v8-auth-04",dateType:"premar1",date:"",type:"social",cat:"Speaker",postType:"",title:"Speaker post 4",purpose:"",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:""},
-  {id:"v8-auth-05",dateType:"premar1",date:"",type:"social",cat:"Speaker",postType:"",title:"Speaker post 5",purpose:"",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:""},
-  {id:"v8-auth-06",dateType:"premar1",date:"",type:"social",cat:"Speaker",postType:"",title:"Speaker post 6",purpose:"",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:""},
-  {id:"v8-auth-07",dateType:"premar1",date:"",type:"social",cat:"Speaker",postType:"",title:"Speaker post 7",purpose:"",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:""},
-  {id:"v8-auth-08",dateType:"premar1",date:"",type:"social",cat:"Speaker",postType:"",title:"Speaker post 8",purpose:"",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:""},
-  {id:"v8-auth-09",dateType:"premar1",date:"",type:"social",cat:"Speaker",postType:"",title:"Speaker post 9",purpose:"",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:""},
-  {id:"v8-auth-10",dateType:"premar1",date:"",type:"social",cat:"Speaker",postType:"",title:"Speaker post 10",purpose:"",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:""}
+  {id:"v8-auth-01",dateType:"premar1",date:"",type:"social",cat:"Speaker",postType:"",title:"Feb speaker 1",purpose:"",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:""},
+  {id:"v8-auth-02",dateType:"premar1",date:"",type:"social",cat:"Speaker",postType:"",title:"Feb speaker 2",purpose:"",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:""},
+  {id:"v8-auth-03",dateType:"premar1",date:"",type:"social",cat:"Speaker",postType:"",title:"Feb speaker 3",purpose:"",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:""},
+  {id:"v8-auth-04",dateType:"premar1",date:"",type:"social",cat:"Speaker",postType:"",title:"Feb musical guest",purpose:"",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:""},
+  {id:"v8-auth-05",dateType:"postmar1",date:"",type:"social",cat:"Speaker",postType:"",title:"Sept speaker 1",purpose:"",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:""},
+  {id:"v8-auth-06",dateType:"postmar1",date:"",type:"social",cat:"Speaker",postType:"",title:"Sept speaker 2",purpose:"",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:""},
+  {id:"v8-auth-07",dateType:"postmar1",date:"",type:"social",cat:"Speaker",postType:"",title:"Sept speaker 3",purpose:"",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:""},
+  {id:"v8-auth-08",dateType:"postmar1",date:"",type:"social",cat:"Speaker",postType:"",title:"Sept musical guest",purpose:"",caption:"",driveLink:"",htagId:"",extraHtags:"",lastUpdated:"",lastUpdatedBy:""}
 ];
 // Ideas I suggested should never come with a date. Clear the ones I dated earlier
 // (only if nobody has edited them since) and add the new ideas, once, on every device.
@@ -770,6 +769,25 @@ function migrateV8(){
 // Sponsor post and Shadow Mountain back to "All authors" whenever their stamp reads exactly
 // "Oct 24 · Nik" or "Oct 24 · Hill". Giving them a stamp with the time in it means no old copy
 // can match them again. Their category is left exactly as it is.
+// 3 speakers + 1 musical guest for each conference. The first copy of the app made 10
+// "Speaker post N" slots: untouched ones are turned into the 8 above, and slots 9-10 removed.
+function trimSpeakerSlots(){
+  let changed = false;
+  const untouched = p=>p && /^Speaker post \d+$/.test(p.title||'') && !p.date && !p.caption && !p.purpose && !p.driveLink;
+  V8_POSTS.forEach(np=>{
+    const p = posts.find(x=>x.id===np.id);
+    if(untouched(p)){ p.title = np.title; p.dateType = np.dateType; touch(p,['title','dateType']); changed = true; }
+  });
+  ['v8-auth-09','v8-auth-10'].forEach(id=>{
+    const p = posts.find(x=>x.id===id);
+    if(!untouched(p)) return;
+    posts = posts.filter(x=>x.id!==id);
+    _pendingDel.add(id); _delAt[id] = Date.now(); _pending.delete(id); delete _dirty[id];
+    recordDeletion(id); changed = true;
+  });
+  if(changed){ _saveDirty(); _savePendingLists(); save(); renderAll(); }
+  return changed;
+}
 function shieldFromOldCopies(){
   let changed = false;
   [].forEach(id=>{
@@ -1377,6 +1395,7 @@ async function loadFromFirestoreAll(){
       renderAll();
     }
     migrateV8();
+    trimSpeakerSlots();
     migrateAuthorIntro();
     migrateAllAuthors();
     shieldFromOldCopies();
@@ -1713,7 +1732,7 @@ function startPresence(){
 // ── ALWAYS THE NEWEST VERSION ──────────────────────────────────────────────
 // When the app comes back on screen, it checks for a newer version and reloads into it
 // (unless you're in the middle of editing or arranging). Your waiting changes are kept.
-const APP_VERSION = 'gathered-social-v2';
+const APP_VERSION = 'gathered-social-v3';
 (()=>{ const l = document.getElementById('app-version-lbl'); if(l) l.textContent = APP_VERSION.replace('gathered-social-v',''); })();
 async function checkForNewVersion(){
   try{
@@ -1831,10 +1850,10 @@ function cardHTML(post, opts={}){
   let tab;
   if(post.date){
     const d = new Date(post.date+"T12:00:00");
-    tab = `<span class="tab-mon">${MONTHS[d.getMonth()].slice(0,3)}</span><span class="tab-num">${d.getDate()}</span>` +
+    tab = confIcon(post) + `<span class="tab-mon">${MONTHS[d.getMonth()].slice(0,3)}</span><span class="tab-num">${d.getDate()}</span>` +
           (post.dateType==='fixed' ? `<span class="tab-fixed">Fixed</span>` : '');
   } else {
-    tab = `<span class="tab-none">No<br>date</span>`;
+    tab = confIcon(post) + `<span class="tab-none">No<br>date</span>`;
   }
   const isFixed = post.dateType==='fixed' && !!post.date;
   const dtLbl = isFixed ? '' : (DATE_TYPE_LBL[post.dateType] || '');
@@ -2204,12 +2223,21 @@ function calDayTap(ds){
 // ── ARRANGE / DRAG ─────────────────────────────────────────────────────────
 // While you drag posts yourself, each post is one slim row (date + name + handle),
 // the same look as the schedule preview, so it's quick to move up and down the list.
+// 🌸 = Feb (spring) conference, 🍂 = Sept (fall) conference, shown at the top of the date tab.
+function confIcon(p, ds){
+  ds = ds===undefined ? p.date : ds;
+  const feb = '<span class="tab-conf" title="Feb conference">🌸</span>', sept = '<span class="tab-conf" title="Sept conference">🍂</span>';
+  if(p.dateType==='premar1') return feb;
+  if(p.dateType==='postmar1') return sept;
+  if(ds) return ds < TICKETS_DATE ? feb : sept;
+  return '';
+}
 function compactRowHTML(p){
   const fixed = p.dateType==='fixed' && !!p.date;
   const d = p.date ? new Date(p.date+'T12:00:00') : null;
   const color = p.type==='email' ? '#C4522E' : p.type==='other' ? '#aaa' : catColor(p.cat);
-  const dateCol = d ? `<span class="tab-mon">${MONTHS[d.getMonth()].slice(0,3)}</span><span class="tab-num">${d.getDate()}</span>` + (fixed ? '<span class="tab-fixed">Fixed</span>' : '')
-                    : '<span class="tab-none">No<br>date</span>';
+  const dateCol = confIcon(p) + (d ? `<span class="tab-mon">${MONTHS[d.getMonth()].slice(0,3)}</span><span class="tab-num">${d.getDate()}</span>` + (fixed ? '<span class="tab-fixed">Fixed</span>' : '')
+                    : '<span class="tab-none">No<br>date</span>');
   return `<div class="card compact-row" data-id="${p.id}" ${fixed?'data-fixed="1"':''} draggable="true">
     <div class="card-stripe">${dateCol}</div>
     <div class="cr-name"><span class="mock-pill" style="background:${color};${inkOn(color)}">${readyMarks(p)}${esc(p.title||'Untitled')}${fixed?' 📌':''}</span></div>
@@ -2490,8 +2518,9 @@ function refreshArrangeDates(){
     const ds = _arrangeProposal[c.dataset.id];
     const tab = c.querySelector('.card-stripe');
     if(!tab) return;
-    if(ds){ const d = new Date(ds+'T12:00:00'); tab.innerHTML = `<span class="tab-mon">${MONTHS[d.getMonth()].slice(0,3)}</span><span class="tab-num">${d.getDate()}</span>`; }
-    else tab.innerHTML = `<span class="tab-none">No<br>date</span>`;
+    const pp = posts.find(x=>x.id===c.dataset.id) || {};
+    if(ds){ const d = new Date(ds+'T12:00:00'); tab.innerHTML = confIcon(pp, ds) + `<span class="tab-mon">${MONTHS[d.getMonth()].slice(0,3)}</span><span class="tab-num">${d.getDate()}</span>`; }
+    else tab.innerHTML = confIcon(pp, '') + `<span class="tab-none">No<br>date</span>`;
     tab.classList.add('tab-proposed');
   });
 }
