@@ -164,6 +164,8 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
 .drag-handle.pin{cursor:default;color:inherit;font-size:11px}
 .tab-proposed{opacity:.88;font-style:italic}
 .tab-conf{font-size:13px;line-height:1;margin-bottom:3px}
+.conf-div-feb .sd-lbl{color:var(--conf-feb);font-weight:600}
+.conf-div-sept .sd-lbl{color:var(--conf-sept);font-weight:600}
 /* First-glance conference color on the date tab: Feb = deep olive, Sept = rust */
 :root{--conf-feb:#3C4A35;--conf-sept:#B0603A}
 .card.conf-feb .card-stripe{background:var(--conf-feb);color:#fff}
@@ -1797,7 +1799,7 @@ function startPresence(){
 // ── ALWAYS THE NEWEST VERSION ──────────────────────────────────────────────
 // When the app comes back on screen, it checks for a newer version and reloads into it
 // (unless you're in the middle of editing or arranging). Your waiting changes are kept.
-const APP_VERSION = 'gathered-social-v4';
+const APP_VERSION = 'gathered-social-v5';
 (()=>{ const l = document.getElementById('app-version-lbl'); if(l) l.textContent = APP_VERSION.replace('gathered-social-v',''); })();
 async function checkForNewVersion(){
   try{
@@ -2004,6 +2006,27 @@ function renderSearchResults(el){
   el.querySelectorAll('.card-title, .card-desc').forEach(n=>{ n.innerHTML = n.innerHTML.replace(re, '<mark class="hit">$1</mark>'); });
 }
 
+// Whichever conference comes next is listed first (now Feb, then Sept). Once a conference
+// has passed, its posts move to the end.
+function confOrder(){
+  const t = today.toISOString().slice(0,10);
+  return Object.keys(CONFS).sort((a,b)=>{
+    const pa = CONFS[a].date < t, pb = CONFS[b].date < t;
+    return (pa - pb) || CONFS[a].date.localeCompare(CONFS[b].date);
+  });
+}
+function confRank(p){ return confOrder().indexOf(confOf(p)); }
+// cards grouped under a heading per conference, next conference first
+function byConfHTML(list, card){
+  const order = confOrder();
+  if(order.filter(c=>list.some(p=>confOf(p)===c)).length < 2 && !activeConfFilters.size) {
+    return list.slice().sort((a,b)=>confRank(a)-confRank(b)).map(card).join('');
+  }
+  return order.map(c=>{
+    const group = list.filter(p=>confOf(p)===c); if(!group.length) return '';
+    return `<div class="section-divider conf-divider conf-div-${c}"><div class="sd-line"></div><div class="sd-lbl">${CONFS[c].icon} ${CONFS[c].long}</div><div class="sd-line"></div></div>` + group.map(card).join('');
+  }).join('');
+}
 function renderMasterList(){
   const el = document.getElementById('master-list-content');
   const view = viewMode === 'calendar' ? 'calendar' : listView;
@@ -2034,7 +2057,7 @@ function renderMasterList(){
   if(view === 'unposted'){
     // Unscheduled = social posts with no date yet, in your arranged order
     const list = filtered.filter(p=>p.type==='social' && !p.date);
-    el.innerHTML = list.length ? list.map(p=>cardHTML(p, {draggable:canDrag()})).join('')
+    el.innerHTML = list.length ? byConfHTML(list, p=>cardHTML(p, {draggable:canDrag()}))
                                : `<div class="empty-msg">Nothing unscheduled. Every post has a date.</div>`;
 
   } else if(view === 'scheduled'){
@@ -2042,7 +2065,7 @@ function renderMasterList(){
     const dated = filtered.filter(p=>p.type==='social' && p.date).sort((a,b)=>a.date.localeCompare(b.date));
     const upcoming = dated.filter(p=>new Date(p.date+"T12:00:00") >= today);
     const past = dated.filter(p=>new Date(p.date+"T12:00:00") < today);
-    let h = upcoming.map(p=>cardHTML(p, {draggable:canDrag()})).join('');
+    let h = byConfHTML(upcoming, p=>cardHTML(p, {draggable:canDrag()}));
     if(past.length){
       h += `<div class="section-divider"><div class="sd-line"></div><div class="sd-lbl">Past</div><div class="sd-line"></div></div>`;
       h += past.map(p=>cardHTML(p, {draggable:canDrag()})).join('');
@@ -2051,6 +2074,7 @@ function renderMasterList(){
 
   } else if(view === 'all-tasks'){
     const sorted = [...filtered].sort((a,b)=>{
+      if(confRank(a)!==confRank(b)) return confRank(a)-confRank(b);
       // unscheduled first, then by date
       const aD = a.dateType==='fixed'&&a.date ? a.date : '0000';
       const bD = b.dateType==='fixed'&&b.date ? b.date : '0000';
@@ -2070,8 +2094,7 @@ function renderMasterList(){
       h += past.map(p=>cardHTML(p,{draggable:canDrag()})).join('');
     }
     if(upcoming.length){
-      h += `<div class="section-divider"><div class="sd-line"></div><div class="sd-lbl">Upcoming</div><div class="sd-line"></div></div>`;
-      h += upcoming.map(p=>cardHTML(p,{draggable:canDrag()})).join('');
+      h += byConfHTML(upcoming, p=>cardHTML(p,{draggable:canDrag()}));
     }
     if(!h) h = `<div class="empty-msg">No posts yet</div>`;
     el.innerHTML = h;
@@ -2084,7 +2107,7 @@ function renderMasterList(){
       if(!group.length) return;
       const lbl = t||'No type';
       h += `<div class="section-divider"><div class="sd-line"></div><div class="sd-lbl">${lbl}</div><div class="sd-line"></div></div>`;
-      h += group.sort((a,b)=>(a.date||'').localeCompare(b.date||'')).map(p=>cardHTML(p,{draggable:canDrag()})).join('');
+      h += group.sort((a,b)=>confRank(a)-confRank(b) || (a.date||'').localeCompare(b.date||'')).map(p=>cardHTML(p,{draggable:canDrag()})).join('');
     });
     el.innerHTML = h || `<div class="empty-msg">No posts</div>`;
 
@@ -2094,7 +2117,7 @@ function renderMasterList(){
       const group = filtered.filter(p=>p.cat===cat);
       if(!group.length) return;
       h += `<div class="section-divider"><div class="sd-line"></div><div class="sd-lbl">${cat}</div><div class="sd-line"></div></div>`;
-      h += group.sort((a,b)=>(a.date||'').localeCompare(b.date||'')).map(p=>cardHTML(p,{draggable:canDrag()})).join('');
+      h += group.sort((a,b)=>confRank(a)-confRank(b) || (a.date||'').localeCompare(b.date||'')).map(p=>cardHTML(p,{draggable:canDrag()})).join('');
     });
     el.innerHTML = h || `<div class="empty-msg">No posts</div>`;
 
