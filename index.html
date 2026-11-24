@@ -460,8 +460,8 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
     <button class="chip c-type" data-ftype="Reel" onclick="toggleFilter('type','Reel',this)">Reel</button>
     <button class="chip c-type" data-ftype="Slides" onclick="toggleFilter('type','Slides',this)">Slides</button>
     <span class="fg-lbl" style="margin-left:6px">Date</span>
-    <button class="chip c-date" data-fdate="Flexible" onclick="toggleFilter('date','Flexible',this)">Flexible</button>
     <button class="chip c-date" data-fdate="Fixed" onclick="toggleFilter('date','Fixed',this)">Fixed</button>
+    <button class="chip c-date" data-fdate="Flexible" onclick="toggleFilter('date','Flexible',this)">Flexible</button>
     <button class="chip c-date" data-fdate="Pre-tickets" onclick="toggleFilter('date','Pre-tickets',this)">Pre-tickets</button>
     <button class="chip c-date" data-fdate="Post-tickets" onclick="toggleFilter('date','Post-tickets',this)">Post-tickets</button>
   </div>
@@ -555,9 +555,9 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
         <label class="ef-lbl" id="pm-date-lbl" style="margin-top:12px">Date</label>
         <div class="date-pills" id="pm-date-pills">
           <button class="date-pill" id="dp-fixed" onclick="selectDatePill('fixed')">📅 Fixed</button>
+          <button class="date-pill" id="dp-flexible" onclick="selectDatePill('flexible')">🔄 Flexible</button>
           <button class="date-pill" id="dp-premarx" onclick="selectDatePill('premar1')">🎟️ Pre-tickets</button>
           <button class="date-pill" id="dp-postmar" onclick="selectDatePill('postmar1')">🎫 Post-tickets</button>
-          <button class="date-pill" id="dp-flexible" onclick="selectDatePill('flexible')">🔄 Flexible</button>
         </div>
         <div id="pm-date-input-wrap" style="margin-top:8px">
           <div class="pm-date-lbl" id="pm-date-sublbl">Post on</div>
@@ -1917,7 +1917,7 @@ function startPresence(){
 // ── ALWAYS THE NEWEST VERSION ──────────────────────────────────────────────
 // When the app comes back on screen, it checks for a newer version and reloads into it
 // (unless you're in the middle of editing or arranging). Your waiting changes are kept.
-const APP_VERSION = 'gathered-social-v15';
+const APP_VERSION = 'gathered-social-v16';
 (()=>{ const l = document.getElementById('app-version-lbl'); if(l) l.textContent = APP_VERSION.replace('gathered-social-v',''); })();
 async function checkForNewVersion(){
   try{
