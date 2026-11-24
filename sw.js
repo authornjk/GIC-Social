@@ -1,6 +1,6 @@
 // ── SOIREE SOCIAL SERVICE WORKER ─────────────────────────────────────────
 // Version bump this string any time you update the app — it forces a cache refresh
-const CACHE_NAME = 'gathered-social-v7';
+const CACHE_NAME = 'gathered-social-v8';
 
 // Files to cache for offline use
 const PRECACHE_URLS = [
@@ -8,7 +8,8 @@ const PRECACHE_URLS = [
   './index.html',
   './manifest.json',
   './logo.png',
-  'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap',
+  './header-banner.png',
+  'https://fonts.googleapis.com/css2?family=Domine:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap',
 ];
 
 // ── INSTALL: cache core files ─────────────────────────────────────────────

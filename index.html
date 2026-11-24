@@ -9,48 +9,49 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Gathered Social">
-<meta name="theme-color" content="#FFFFFF">
+<meta name="theme-color" content="#6C7355">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Gathered Social</title>
 <link rel="manifest" href="./manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Domine:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --black:#1F211C;--gray:#D9D9D9;--white:#fff;
-  /* Gathered in Christ palette (from the logos): deep olive, sage, cream, terracotta, rose */
-  --navy:#3C4A35;--navy-l:#56664C;--navy-d:#2A3424;
-  --coral:#A9704F;--coral-l:#E3C2A8;--coral-d:#8C5539;
-  --sage:#A7AC96;--sage-l:#CCCDBE;--sage-d:#6B7152;
-  --cream:#F4F2E8;--cream-d:#E2E0CC;
-  --tan:#C68B63;--tan-l:#EEDCCB;
-  --pink:#B8636E;--pink-l:#E9C3C8;--pink-d:#8F3F4A;
-  --fd:'Libre Caslon Text',serif;--fb:'Montserrat',sans-serif;
-  /* Category colors */
-  --cat-author:#B8636E;   /* rose — Speaker */
-  --cat-general:#4F7C82;  /* teal — Inspiration */
-  --cat-tickets:#A65A32;  /* rust — Registration */
-  --cat-event:#3C4A35;    /* deep olive — Event */
-  --cat-fun:#C9A043;      /* mustard — Fun */
-  --cat-other:#A7AC96;    /* sage — other/custom */
+  /* Gathered in Christ brand palette (brand guide): olive, burgundy, rose, cream, terracotta */
+  --navy:#6C7255;--navy-l:#8A8F74;--navy-d:#4F5440;
+  --coral:#A56F52;--coral-l:#E6CDB9;--coral-d:#541B1E;
+  --sage:#A7AB96;--sage-l:#CBCDBE;--sage-d:#4F5440;
+  --cream:#F3F1E7;--cream-d:#E2DEC9;
+  --tan:#C08A61;--tan-l:#EFDCCB;
+  --pink:#A04C54;--pink-l:#E8C7CA;--pink-d:#541B1E;
+  --burgundy:#541B1E;--hdr-olive:#6C7355;
+  --fd:'Domine',Georgia,serif;--fb:'Montserrat',sans-serif;
+  /* Category colors (all from the brand guide) */
+  --cat-author:#A04C54;   /* rose — Speaker */
+  --cat-general:#868B6F;  /* dark sage — Inspiration */
+  --cat-tickets:#A56F52;  /* terracotta — Registration */
+  --cat-event:#6C7255;    /* olive — Event */
+  --cat-fun:#C08A61;      /* light terracotta — Fun */
+  --cat-other:#A7AB96;    /* sage — other/custom */
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:var(--fb);background:var(--cream);color:var(--black);min-height:100dvh;overflow-x:hidden}
 
 /* ── HEADER ── */
-.hdr{background:var(--white);padding:calc(10px + env(safe-area-inset-top,0px)) 14px 0;position:sticky;top:0;z-index:100;border-bottom:1px solid var(--cream-d)}
-.hdr-logo{display:block;height:56px;width:auto;max-width:62%;object-fit:contain;flex-shrink:1;min-width:0}
+.hdr{background:var(--hdr-olive);padding:calc(10px + env(safe-area-inset-top,0px)) 14px 0;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--burgundy)}
+.hdr-logo{display:block;height:64px;width:auto;max-width:62%;object-fit:contain;flex-shrink:1;min-width:0}
 .hdr-top{display:flex;align-items:center;gap:8px;padding-bottom:8px;flex-wrap:wrap}
 .app-title{font-family:var(--fd);font-size:22px;font-weight:400;color:var(--white);line-height:1}
 .app-sub{font-size:10px;font-weight:300;color:rgba(255,255,255,.5);letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
-.user-pill{font-size:11px;font-weight:600;color:var(--navy);background:var(--sage-l);border-radius:15px;min-width:30px;height:30px;flex-shrink:0;cursor:pointer;border:none;font-family:var(--fb);display:flex;align-items:center;justify-content:center;padding:0 9px}
+.user-pill{font-size:11px;font-weight:600;color:var(--burgundy);background:var(--cream-d);border-radius:15px;min-width:30px;height:30px;flex-shrink:0;cursor:pointer;border:none;font-family:var(--fb);display:flex;align-items:center;justify-content:center;padding:0 9px}
 
 /* countdown badges row */
 .cd-row{display:flex;flex:1;min-width:0;justify-content:center;align-items:center;flex-wrap:nowrap;white-space:nowrap}
 .cd-row::-webkit-scrollbar{display:none}
-.cd-badge{background:none!important;border:none;padding:0;cursor:pointer;font-family:var(--fb);color:var(--navy);font-size:12px;font-weight:400;line-height:1.3;white-space:nowrap}
-.cd-sep{color:var(--coral);margin:0 10px;font-size:12px}
+.cd-badge{background:none!important;border:none;padding:0;cursor:pointer;font-family:var(--fb);color:var(--cream-d);font-size:12px;font-weight:400;line-height:1.3;white-space:nowrap}
+.cd-sep{color:var(--tan);margin:0 10px;font-size:12px}
 .cd-badge b{font-weight:600}
-.cd-badge span.cd-num{font-family:var(--fb);font-size:13px;font-weight:600;font-variant-numeric:lining-nums tabular-nums;color:var(--navy);margin-right:3px}
+.cd-badge span.cd-num{font-family:var(--fb);font-size:13px;font-weight:600;font-variant-numeric:lining-nums tabular-nums;color:#fff;margin-right:3px}
 /* narrow phones: countdown line drops under the logo row */
 @media (max-width:640px){.cd-row{order:3;flex-basis:100%;padding-top:4px}.cd-badge,.cd-sep{font-size:11px}.cd-badge span.cd-num{font-size:12px}.hdr-top .user-pill{margin-left:auto}}
 
@@ -136,7 +137,7 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
 /* Section divider between unscheduled and scheduled */
 .section-divider{display:flex;align-items:center;gap:8px;margin:14px 0 10px}
 .sd-line{flex:1;height:1px;background:var(--gray)}
-.sd-lbl{font-family:var(--fd);font-size:12px;font-style:italic;color:var(--tan);white-space:nowrap;flex-shrink:0}
+.sd-lbl{font-family:var(--fd);font-size:12px;color:var(--tan);white-space:nowrap;flex-shrink:0}
 
 /* ── CARD ── */
 .card{background:var(--white);border-radius:12px;overflow:hidden;margin-bottom:7px;border:1px solid var(--cream-d);display:flex;position:relative;transition:transform .1s}
@@ -166,8 +167,8 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
 .tab-conf{font-size:13px;line-height:1;margin-bottom:3px}
 .conf-div-feb .sd-lbl{color:var(--conf-feb);font-weight:600}
 .conf-div-sept .sd-lbl{color:var(--conf-sept);font-weight:600}
-/* First-glance conference color on the date tab: Feb = deep olive, Sept = rust */
-:root{--conf-feb:#3C4A35;--conf-sept:#B0603A}
+/* First-glance conference color on the date tab: Feb = olive, Sept = terracotta */
+:root{--conf-feb:#6C7255;--conf-sept:#A56F52}
 .chip.conf-chip-feb.active{background:var(--conf-feb);border-color:var(--conf-feb);color:#fff}
 .chip.conf-chip-sept.active{background:var(--conf-sept);border-color:var(--conf-sept);color:#fff}
 #cp-feb.active{background:var(--conf-feb);border-color:var(--conf-feb);color:#fff}
@@ -205,7 +206,7 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
 /* Arrange overlay bar */
 .arrange-bar{background:var(--cream-d);border-radius:12px;padding:10px;margin-bottom:8px;display:none}
 .arrange-bar.visible{display:block}
-.arrange-q{font-family:var(--fd);font-size:15px;font-style:italic;color:var(--navy);margin:0 2px 8px}
+.arrange-q{font-family:var(--fd);font-size:15px;color:var(--navy);margin:0 2px 8px}
 .arrange-choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .arrange-choice{border:1px solid var(--gray);background:var(--white);border-radius:12px;padding:10px;text-align:left;cursor:pointer;font-family:var(--fb);color:var(--black);display:flex;flex-direction:column;gap:3px}
 .arrange-choice b{font-size:12px;font-weight:600;color:var(--navy);line-height:1.3}
@@ -306,7 +307,7 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
 .as-start-row .ef-input{flex:1;padding:6px 10px}
 .link-btn{display:block;width:100%;background:none;border:none;color:#888;font-family:var(--fb);font-size:11px;text-decoration:underline;margin-top:10px;cursor:pointer}
 .mock-cal{background:var(--white);border-radius:12px;border:1px solid var(--cream-d);overflow:hidden;margin-bottom:12px}
-.mock-cal-header{background:var(--navy);color:var(--white);padding:10px 14px;font-family:var(--fd);font-size:16px;font-style:italic}
+.mock-cal-header{background:var(--navy);color:var(--white);padding:10px 14px;font-family:var(--fd);font-size:16px;}
 .mock-cal-row{display:flex;border-bottom:1px solid var(--cream-d);align-items:stretch}
 .mock-cal-row:last-child{border-bottom:none}
 .mock-cal-date{width:54px;flex-shrink:0;padding:8px;text-align:center;background:var(--cream);border-right:1px solid var(--cream-d)}
@@ -398,7 +399,7 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
 .nav-item.active .nav-lbl{color:var(--navy)}
 .nav-item.new-post-btn .nav-icon{font-size:24px}
 .nav-item.new-post-btn .nav-lbl{color:var(--coral-d)}
-.empty-msg{text-align:center;padding:40px 20px;color:#bbb;font-family:var(--fd);font-style:italic;font-size:17px}
+.empty-msg{text-align:center;padding:40px 20px;color:#bbb;font-family:var(--fd);font-size:17px}
 </style>
 </head>
 <body>
@@ -406,7 +407,7 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
 <!-- ── HEADER ── -->
 <div class="hdr">
   <div class="hdr-top">
-    <img class="hdr-logo" src="./logo.png" alt="Gathered in Christ — Southern Utah Women’s Conference">
+    <img class="hdr-logo" src="./header-banner.png" alt="Gathered in Christ — Southern Utah Women’s Conference">
     <div class="cd-row" id="cd-row"></div>
     <div class="presence" id="presence-chip" style="display:none"></div>
     <button class="user-pill" onclick="openUserSwitch()" title="Switch user"><span id="current-user-display">…</span></button>
@@ -668,9 +669,10 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
     <div class="ef"><label class="ef-lbl">Date</label><input class="ef-input" id="cd-date" type="date"></div>
     <div class="ef"><label class="ef-lbl">Color</label>
       <select class="ef-input" id="cd-color">
-        <option value="#3C4A35">Olive</option>
-        <option value="#A9704F">Terracotta</option>
-        <option value="#B8636E">Rose</option>
+        <option value="#6C7255">Olive</option>
+        <option value="#A56F52">Terracotta</option>
+        <option value="#A04C54">Rose</option>
+        <option value="#541B1E">Burgundy</option>
         <option value="#6B7152">Sage</option>
         <option value="#C68B63">Clay</option>
       </select>
@@ -1308,8 +1310,8 @@ document.addEventListener('visibilitychange', ()=>{
   syncAuthorIntros();
 });
 const DC = [
-  {id:"cd1",label:"the Feb Conference",date:"2027-02-27",color:"#A9704F"},
-  {id:"cd2",label:"the Sept Conference",date:"2027-09-18",color:"#3C4A35"},
+  {id:"cd1",label:"the Feb Conference",date:"2027-02-27",color:"#A56F52"},
+  {id:"cd2",label:"the Sept Conference",date:"2027-09-18",color:"#6C7255"},
 ];
 const DCATS = ["Speaker","Registration","Event","Inspiration","Fun"];
 const DHTAGS = [
@@ -1823,7 +1825,7 @@ function startPresence(){
 // ── ALWAYS THE NEWEST VERSION ──────────────────────────────────────────────
 // When the app comes back on screen, it checks for a newer version and reloads into it
 // (unless you're in the middle of editing or arranging). Your waiting changes are kept.
-const APP_VERSION = 'gathered-social-v7';
+const APP_VERSION = 'gathered-social-v8';
 (()=>{ const l = document.getElementById('app-version-lbl'); if(l) l.textContent = APP_VERSION.replace('gathered-social-v',''); })();
 async function checkForNewVersion(){
   try{
@@ -1845,11 +1847,11 @@ window.addEventListener('online', ()=>{ if(window._firestoreDB && (_pending.size
 // Built-in categories keep their color and rules when renamed. catAlias maps a
 // current name to the built-in it came from, e.g. {"Meet the Authors":"Speaker"}.
 const BASE_CAT_CLASS = {'Speaker':'cat-author','Inspiration':'cat-general','Registration':'cat-tickets','Event':'cat-event','Fun':'cat-fun'};
-const BASE_CAT_COLOR = {'Speaker':'#B8636E','Inspiration':'#4F7C82','Registration':'#A65A32','Event':'#3C4A35','Fun':'#C9A043'};
+const BASE_CAT_COLOR = {'Speaker':'#A04C54','Inspiration':'#868B6F','Registration':'#A56F52','Event':'#6C7255','Fun':'#C08A61'};
 let catAlias = (()=>{ try{ return JSON.parse(localStorage.getItem('ss_catalias')||'{}'); }catch(e){ return {}; } })();
 function catKey(cat){ return catAlias[cat] || cat; }                       // current name -> built-in name
 function catName(base){ return Object.keys(catAlias).find(k=>catAlias[k]===base) || base; } // built-in -> current name
-function catColor(cat){ return BASE_CAT_COLOR[catKey(cat)] || '#8BA888'; }
+function catColor(cat){ return BASE_CAT_COLOR[catKey(cat)] || '#A7AB96'; }
 function catClass(cat){
   if(!cat) return 'cat-misc';
   return BASE_CAT_CLASS[catKey(cat)] || 'cat-other';
@@ -2166,7 +2168,7 @@ let _calSelectedDay = null; // 'YYYY-MM-DD'
 function renderCalendarView(){
   const el = document.getElementById('master-list-content');
   function postColor(p){
-    if(p.type==='email') return '#C4522E';
+    if(p.type==='email') return '#541B1E';
     if(p.type==='other') return '#aaa';
     return catColor(p.cat);
   }
@@ -2343,7 +2345,7 @@ function confIcon(p, ds){ return ''; }   // the conference headings in the list 
 function compactRowHTML(p){
   const fixed = p.dateType==='fixed' && !!p.date;
   const d = p.date ? new Date(p.date+'T12:00:00') : null;
-  const color = p.type==='email' ? '#C4522E' : p.type==='other' ? '#aaa' : catColor(p.cat);
+  const color = p.type==='email' ? '#541B1E' : p.type==='other' ? '#aaa' : catColor(p.cat);
   const dateCol = confIcon(p) + (d ? `<span class="tab-mon">${MONTHS[d.getMonth()].slice(0,3)}</span><span class="tab-num">${d.getDate()}</span>` + (fixed ? '<span class="tab-fixed">Fixed</span>' : '')
                     : '<span class="tab-none">No<br>date</span>');
   return `<div class="card compact-row conf-${confOf(p)}" data-id="${p.id}" ${fixed?'data-fixed="1"':''} draggable="true">
@@ -2868,7 +2870,7 @@ function renderMockCalendar(proposed){
   document.querySelectorAll('[data-mv]').forEach(b=>b.classList.toggle('active', b.dataset.mv===_mockView));
   const cal = document.getElementById('as-mock-cal');
   if(!proposed.length){ cal.innerHTML='<div style="padding:14px;color:#aaa;font-style:italic">No posts to schedule</div>'; return; }
-  const colorOf = item=>{ const p = posts.find(x=>x.id===item.id); return p ? (p.type==='email'?'#C4522E':p.type==='other'?'#aaa':catColor(p.cat)) : '#8BA888'; };
+  const colorOf = item=>{ const p = posts.find(x=>x.id===item.id); return p ? (p.type==='email'?'#541B1E':p.type==='other'?'#aaa':catColor(p.cat)) : '#A7AB96'; };
 
   if(_mockView === 'calendar'){
     const dated = proposed.filter(i=>i.date);
@@ -3441,7 +3443,7 @@ function openAddCountdown(){
   document.getElementById('cd-modal-title').textContent = 'Add Countdown';
   document.getElementById('cd-label').value = '';
   document.getElementById('cd-date').value = '';
-  document.getElementById('cd-color').value = '#3C4A35';
+  document.getElementById('cd-color').value = '#6C7255';
   document.getElementById('cd-del-btn').style.display = 'none';
   openModal('cd-modal');
 }
