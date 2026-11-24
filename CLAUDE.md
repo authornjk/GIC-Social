@@ -24,7 +24,9 @@ no Soiree HQ, no Author Info, its own Firebase project.
   previous conference (`lo`). The 2027 ones are named "Feb Conference" / "Sept Conference" (set once by
   `ensureConfNames()`; a saved name wins after that). No season emoji icons anywhere (Nicole asked to remove them).
 - One sheet (`cd-modal`) edits a conference (name, date, tickets on sale, color) and its countdown together;
-  "Other countdowns" lists only countdowns that aren't on a conference date.
+  "Other countdowns" lists only countdowns that aren't on a conference date. Adding one asks which conference and
+  "Is it for tickets going on sale?": Yes → `{tixFor:conf}`, date and label follow that conference's ticket date
+  (`syncTixCountdowns()`; asks for the ticket date if it isn't set); No → name + date (`savePlainCountdown()`).
 - Every post has `p.conf` (a key of `CONFS`). The post form asks "Which conference?" first, then the date type.
 - Date types: `fixed`, `premar1` = **Pre-tickets**, `postmar1` = **Post-tickets**, `flexible`.
   (Internal names are left over from the Soirée app; labels are what the user sees.)

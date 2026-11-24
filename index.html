@@ -232,7 +232,10 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
 .modal-close-btn{border:none;background:var(--cream-d);border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
 
 /* ── FORM ── */
-.ef{margin-bottom:14px}
+.ef{margin-bottom:14px;min-width:0}
+.modal{overflow-x:hidden}
+.ef-input{min-width:0;max-width:100%}
+input[type=date].ef-input{-webkit-appearance:none;appearance:none;display:block;width:100%;min-height:42px;text-align:left}
 .ef-lbl{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#888;margin-bottom:5px;display:block}
 .ef-input{width:100%;border:1px solid var(--gray);border-radius:8px;padding:9px 12px;font-family:var(--fb);font-size:13px;background:var(--white);color:var(--black);outline:none}
 .ef-input:focus{border-color:var(--sage)}
@@ -667,8 +670,14 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
       <div class="modal-title" id="cd-modal-title">Countdown</div>
       <button class="modal-close-btn" onclick="closeModal('cd-modal')">✕</button>
     </div>
-    <div class="ef"><label class="ef-lbl">Name</label><input class="ef-input" id="cd-label"></div>
-    <div class="ef"><label class="ef-lbl">Date</label><input class="ef-input" id="cd-date" type="date"></div>
+    <div id="cd-kind">
+      <div class="ef"><label class="ef-lbl">Which conference is it for?</label><div class="date-pills" id="cd-conf-pills"></div></div>
+      <div class="ef"><label class="ef-lbl">Is it for tickets going on sale?</label>
+        <div class="date-pills"><button type="button" class="date-pill" id="cd-tix-yes" onclick="setCdTix(true)">🎟️ Yes</button><button type="button" class="date-pill" id="cd-tix-no" onclick="setCdTix(false)">No</button></div>
+        <div class="ef-hint" id="cd-tix-info" style="font-size:12px;color:#666;margin-top:6px"></div></div>
+    </div>
+    <div class="ef" id="cd-name-row"><label class="ef-lbl">Name</label><input class="ef-input" id="cd-label"></div>
+    <div class="ef" id="cd-date-row"><label class="ef-lbl">Date</label><input class="ef-input" id="cd-date" type="date"></div>
     <div class="ef" id="cd-tix-row"><label class="ef-lbl">Tickets go on sale</label><input class="ef-input" id="cd-tix" type="date">
       <div class="ef-hint" id="cd-tix-hint" style="font-size:11px;color:#888;margin-top:4px">Leave blank until you know it.</div></div>
     <div class="ef"><label class="ef-lbl">Color</label>
@@ -1914,7 +1923,7 @@ function startPresence(){
 // ── ALWAYS THE NEWEST VERSION ──────────────────────────────────────────────
 // When the app comes back on screen, it checks for a newer version and reloads into it
 // (unless you're in the middle of editing or arranging). Your waiting changes are kept.
-const APP_VERSION = 'gathered-social-v17';
+const APP_VERSION = 'gathered-social-v18';
 (()=>{ const l = document.getElementById('app-version-lbl'); if(l) l.textContent = APP_VERSION.replace('gathered-social-v',''); })();
 async function checkForNewVersion(){
   try{
@@ -2037,6 +2046,7 @@ function toggleFilter(group, value, btn){
 // ── COUNTDOWNS ─────────────────────────────────────────────────────────────
 function renderCountdowns(){
   rebuildConfs();
+  if(typeof countdowns!=='undefined' && countdowns && syncTixCountdowns()) setTimeout(save, 0);
   const row = document.getElementById('cd-row');
   row.innerHTML = countdowns.map(cd=>{
     const d = dateDiff(cd.date);
@@ -3601,6 +3611,23 @@ function copyCaption(){
 // tickets go on sale and a color; its countdown in the top bar follows it. A countdown to any
 // other day is just a countdown (fill in a ticket date and it becomes a conference).
 let _cdConf = null;   // conference key the sheet is editing, 'new' for a new conference, null for a plain countdown
+let _cdFor = null, _cdIsTix = null;   // plain countdowns: which conference, and is it the ticket sale
+function _cdShow(id, on){ const el = document.getElementById(id); if(el) el.style.display = on ? '' : 'none'; }
+function renderCdKind(){
+  const t = today.toISOString().slice(0,10);
+  document.getElementById('cd-conf-pills').innerHTML = confOrder().filter(c=>CONFS[c].date >= t || c===_cdFor).map(c=>
+    `<button type="button" class="date-pill conf-pill${c===_cdFor?' active':''}" id="cdc-${c}" onclick="setCdFor('${c}')">${esc(CONFS[c].name)}</button>`).join('');
+  document.getElementById('cd-tix-yes').classList.toggle('active', _cdIsTix===true);
+  document.getElementById('cd-tix-no').classList.toggle('active', _cdIsTix===false);
+  const C = _cdFor ? CONFS[_cdFor] : null, info = document.getElementById('cd-tix-info');
+  // tickets: nothing else to fill in, unless that conference has no ticket date yet
+  _cdShow('cd-name-row', _cdIsTix===false); _cdShow('cd-date-row', _cdIsTix===false);
+  _cdShow('cd-tix-row', _cdIsTix===true && !!C && !C.tix);
+  info.textContent = _cdIsTix===true && C ? (C.tix ? 'Counts down to '+_fmtShort(C.tix)+', '+C.tix.slice(0,4)+', the ticket sale date in Settings for the '+C.long+'. If that date changes, this follows it.' : 'The '+C.long+' has no ticket sale date yet. Pick it below and it is saved in Settings too.') : '';
+  document.getElementById('cd-tix-hint').textContent = '';
+}
+function setCdFor(c){ _cdFor = c; renderCdKind(); }
+function setCdTix(v){ _cdIsTix = v; renderCdKind(); }
 const CD_COLORS = PALETTE;
 function _pickCdColor(k){
   document.getElementById('cd-color').value = k;
@@ -3613,8 +3640,11 @@ function _fillCdSheet(title, label, date, tix, color, canDelete){
   document.getElementById('cd-label').value = label;
   document.getElementById('cd-date').value = date;
   document.getElementById('cd-tix').value = tix;
-  document.getElementById('cd-tix-hint').textContent = _cdConf ? 'Leave blank until you know it.' : 'Only for a conference. Fill it in and this becomes a conference too.';
+  document.getElementById('cd-tix-hint').textContent = 'Leave blank until you know it.';
   _pickCdColor(color);
+  // a conference shows name/date/tickets; a countdown asks which conference and whether it's the ticket sale
+  _cdShow('cd-kind', !_cdConf);
+  if(_cdConf){ ['cd-name-row','cd-date-row','cd-tix-row'].forEach(id=>_cdShow(id, true)); } else renderCdKind();
   const del = document.getElementById('cd-del-btn'); del.style.display = canDelete ? '' : 'none'; del.classList.remove('confirming'); del.textContent = 'Remove';
   openModal('cd-modal');
 }
@@ -3627,17 +3657,19 @@ function openConfSheet(c){
     C ? C.color : (CONF_COLORS.find(k=>!used.includes(k)) || CONF_COLORS[0]), !!(C && C.added));
 }
 function openAddCountdown(){
-  editingCdId = null; _cdConf = null;
-  _fillCdSheet('Add Countdown', '', '', '', '#6C7255', false);
+  editingCdId = null; _cdConf = null; _cdIsTix = null;
+  const t = today.toISOString().slice(0,10); _cdFor = confOrder().find(c=>CONFS[c].date >= t) || null;
+  _fillCdSheet('Add Countdown', '', '', '', '#C9A043', false);
 }
 function openEditCountdown(id){
   const cd = countdowns.find(c=>c.id===id); if(!cd) return;
   const c = _confByDate(cd.date);
   if(c){ openConfSheet(c); return; }
-  editingCdId = id; _cdConf = null;
+  editingCdId = id; _cdConf = null; _cdFor = cd.tixFor || cd.conf || null; _cdIsTix = cd.tixFor ? true : (cd.conf ? false : false);
   _fillCdSheet('Edit Countdown', cd.label, cd.date, '', cd.color || '#6C7255', true);
 }
 function saveCountdown(){
+  if(!_cdConf) return savePlainCountdown();
   const label = document.getElementById('cd-label').value.trim(), date = document.getElementById('cd-date').value;
   const tix = document.getElementById('cd-tix').value, color = document.getElementById('cd-color').value;
   if(!label || !date){ alert('Give it a name and a date.'); return; }
@@ -3666,6 +3698,41 @@ function saveCountdown(){
   save(); closeModal('cd-modal');
   rebuildConfs(); renderConfChoices(); renderCountdowns(); renderSettingsPage(); renderMasterList();
   if(c) showToast(CONFS[c].long + ' saved');
+}
+function savePlainCountdown(){
+  const color = document.getElementById('cd-color').value;
+  const c = _cdFor; if(!c || !CONFS[c]){ alert('Pick which conference this countdown is for.'); return; }
+  if(_cdIsTix===null){ alert('Is this countdown for tickets going on sale? Tap Yes or No.'); return; }
+  let d;
+  if(_cdIsTix){
+    const C = CONFS[c];
+    if(!C.tix){
+      const tix = document.getElementById('cd-tix').value;
+      if(!tix){ alert('Pick the day tickets go on sale for the '+C.long+'.'); return; }
+      if(tix > C.date || (C.lo && tix < C.lo)){ alert('Tickets for the '+C.long+' need to go on sale '+(C.lo?'between '+_fmtShort(C.lo)+' and ':'on or before ')+_fmtShort(C.date)+'.'); return; }
+      C.tix = tix; _storeConfs(); _shareConfs();
+    }
+    d = {label: C.name + ' ticket sales', date: C.tix, color, conf:c, tixFor:c};
+  } else {
+    const label = document.getElementById('cd-label').value.trim(), date = document.getElementById('cd-date').value;
+    if(!label && !date){ alert('Give it a name and pick a date.'); return; }
+    if(!label){ alert('Give it a name.'); return; }
+    if(!date){ alert('Pick a date.'); return; }
+    d = {label, date, color, conf:c, tixFor:null};
+  }
+  const cd = editingCdId ? countdowns.find(x=>x.id===editingCdId) : null;
+  if(cd) Object.assign(cd, d); else countdowns.push({id:uid(), ...d});
+  save(); closeModal('cd-modal');
+  renderCountdowns(); renderSettingsPage(); renderMasterList();
+  showToast('Countdown saved: ' + d.label);
+}
+// ticket-sale countdowns follow their conference's ticket date
+function syncTixCountdowns(){
+  let changed = false;
+  (countdowns||[]).forEach(cd=>{ if(!cd.tixFor || !CONFS[cd.tixFor]) return; const C = CONFS[cd.tixFor];
+    if(C.tix && cd.date !== C.tix){ cd.date = C.tix; changed = true; }
+    const lbl = C.name + ' ticket sales'; if(cd.label !== lbl){ cd.label = lbl; changed = true; } });
+  return changed;
 }
 function deleteCountdown(){
   if(_cdConf && _cdConf!=='new' && CONFS[_cdConf] && CONFS[_cdConf].added){ removeConference(_cdConf); return; }
@@ -3739,7 +3806,7 @@ function renderSettingsPage(){
   const _otherCds = countdowns.filter(cd=>!_confByDate(cd.date));
   document.getElementById('cd-settings-list').innerHTML = (_otherCds.length ? '' : '<div class="settings-item"><div class="si-sub">Each conference has its own countdown. Add one here for any other day.</div></div>') + _otherCds.map(cd=>`
     <div class="settings-item">
-      <div><div class="si-label">${esc(cd.label)}</div><div class="si-sub">${cd.date}</div></div>
+      <div><div class="si-label">${esc(cd.label)}</div><div class="si-sub">${cd.date ? _fmtShort(cd.date)+', '+cd.date.slice(0,4) : 'no date yet'}${cd.conf && CONFS[cd.conf] ? ' · '+esc(CONFS[cd.conf].name) : ''}</div></div>
       <div class="si-actions">
         <button class="si-btn" onclick="openEditCountdown('${cd.id}')">Edit</button>
         <button class="si-btn del" onclick="removeCDFromSettings('${cd.id}')">✕</button>
