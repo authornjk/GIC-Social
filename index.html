@@ -41,10 +41,10 @@ body{font-family:var(--fb);background:var(--cream);color:var(--black);min-height
 
 /* ── HEADER ── */
 .hdr{background:var(--hdr-olive);padding:calc(10px + env(safe-area-inset-top,0px)) 14px 0;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--burgundy)}
-.hdr-logo{display:block;height:64px;width:auto;max-width:58%;object-fit:contain;flex-shrink:1;min-width:0;margin:0 auto}
+.hdr-logo{display:block;height:50px;width:auto;max-width:58%;object-fit:contain;flex-shrink:1;min-width:0;margin:0 auto}
 .hdr-top{display:flex;align-items:center;justify-content:center;gap:8px;padding-bottom:8px;flex-wrap:wrap;position:relative}
-.hdr-right{position:absolute;right:0;top:17px;display:flex;align-items:center;gap:6px}
-@media (min-width:900px){.hdr-logo{height:84px}.hdr-right{top:27px}}
+.hdr-right{position:absolute;right:0;top:10px;display:flex;align-items:center;gap:6px}
+@media (min-width:900px){.hdr-logo{height:64px}.hdr-right{top:17px}}
 .app-title{font-family:var(--fd);font-size:22px;font-weight:400;color:var(--white);line-height:1}
 .app-sub{font-size:10px;font-weight:300;color:rgba(255,255,255,.5);letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
 .user-pill{font-size:11px;font-weight:600;color:var(--burgundy);background:var(--cream-d);border-radius:15px;min-width:30px;height:30px;flex-shrink:0;cursor:pointer;border:none;font-family:var(--fb);display:flex;align-items:center;justify-content:center;padding:0 9px}
@@ -58,7 +58,7 @@ body{font-family:var(--fb);background:var(--cream);color:var(--black);min-height
 .cd-badge span.cd-num{font-family:var(--fb);font-size:13px;font-weight:600;font-variant-numeric:lining-nums tabular-nums;color:#fff;margin-right:3px}
 /* narrow phones: countdown line drops under the logo row */
 .cd-row{order:3;flex-basis:100%;padding-top:2px;overflow-x:auto;scrollbar-width:none;justify-content:safe center}
-@media (max-width:640px){.cd-badge,.cd-sep{font-size:11px}.cd-badge span.cd-num{font-size:12px}.hdr-right .presence{display:none!important}}
+@media (max-width:640px){.cd-row{flex-wrap:wrap;row-gap:2px;white-space:normal}.cd-badge,.cd-sep{font-size:11px}.cd-badge span.cd-num{font-size:12px}.hdr-right .presence{display:none!important}}
 
 /* ── FILTER CHIPS ── */
 .filter-bar{background:var(--white);border-bottom:1px solid var(--cream-d);padding:7px 0 5px}
@@ -412,7 +412,7 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
 <!-- ── HEADER ── -->
 <div class="hdr">
   <div class="hdr-top">
-    <img class="hdr-logo" src="./header-banner.png" alt="Gathered in Christ — Southern Utah Women’s Conference">
+    <img class="hdr-logo" src="./header-banner.png?v=10" alt="Gathered in Christ — Southern Utah Women’s Conference">
     <div class="cd-row" id="cd-row"></div>
     <div class="hdr-right">
       <div class="presence" id="presence-chip" style="display:none"></div>
@@ -1912,7 +1912,7 @@ function startPresence(){
 // ── ALWAYS THE NEWEST VERSION ──────────────────────────────────────────────
 // When the app comes back on screen, it checks for a newer version and reloads into it
 // (unless you're in the middle of editing or arranging). Your waiting changes are kept.
-const APP_VERSION = 'gathered-social-v9';
+const APP_VERSION = 'gathered-social-v10';
 (()=>{ const l = document.getElementById('app-version-lbl'); if(l) l.textContent = APP_VERSION.replace('gathered-social-v',''); })();
 async function checkForNewVersion(){
   try{
