@@ -1,0 +1,30 @@
+{
+  "name": "Gathered Social",
+  "short_name": "Gathered Social",
+  "description": "Gathered in Christ: Southern Utah Women's Conference — social media & email planning hub.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4F2E8",
+  "theme_color": "#3C4A35",
+  "categories": ["productivity", "lifestyle"],
+  "icons": [
+    { "src": "./icon-96.png",  "sizes": "96x96",   "type": "image/png" },
+    { "src": "./icon-120.png", "sizes": "120x120",  "type": "image/png" },
+    { "src": "./icon-152.png", "sizes": "152x152",  "type": "image/png" },
+    { "src": "./icon-180.png", "sizes": "180x180",  "type": "image/png" },
+    { "src": "./icon-192.png", "sizes": "192x192",  "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512",  "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Add New Post",
+      "short_name": "New Post",
+      "description": "Add a new social media post",
+      "url": "./?action=newpost",
+      "icons": [{ "src": "./icon-96.png", "sizes": "96x96" }]
+    }
+  ]
+}
