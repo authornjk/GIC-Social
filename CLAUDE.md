@@ -30,6 +30,8 @@ no Soiree HQ, no Author Info, its own Firebase project.
 - Ticket sale date per conference is set in **Settings → Conferences** (shared via `ss_meta/confs`).
   Until it's set, Pre/Post-tickets don't split the window.
 - Lists are grouped under a heading per conference, the **next upcoming conference first** (`confOrder()`).
+- Post-event posts: a date after the post's conference is allowed; saving or dragging there asks
+  "This is post-event. Are you sure you want this date?" (`isPostEvent`). Arrange leaves post-event posts alone.
 - Scheduler (`computeProposal`) runs once per conference; Fixed posts never move.
 - **Arrange** works on one conference at a time (`arrangeConf`, picked with chips at the top of the arrange bar;
   defaults to the single conference filter, else the next upcoming conference).

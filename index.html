@@ -885,11 +885,15 @@ const _fmtShort = ds=>{ const d = new Date(ds+'T12:00:00'); return MONTHS[d.getM
 function dateOk(p, ds){
   if(!ds) return '';
   const c = confOf(p), C = CONFS[c];
-  if(ds > C.date || (C.lo && ds < C.lo)) return 'is for the '+C.long+', so it needs a date '+(C.lo ? 'between '+_fmtShort(C.lo)+' and '+_fmtShort(C.date) : 'on or before '+_fmtShort(C.date))+'.';
+  if(C.lo && ds < C.lo) return 'is for the '+C.long+', so it needs a date '+(C.lo ? 'between '+_fmtShort(C.lo)+' and '+_fmtShort(C.date) : 'on or before '+_fmtShort(C.date))+' (or after it, as a post-event post).';
+  if(ds > C.date) return '';   // post-event posts are allowed; savePost / calMoveTo ask first
   if(C.tix && p.dateType==='premar1' && ds >= C.tix) return 'is set to Pre-tickets, so it needs a date before tickets go on sale ('+_fmtShort(C.tix)+').';
   if(C.tix && p.dateType==='postmar1' && ds < C.tix) return 'is set to Post-tickets, so it needs a date on or after tickets go on sale ('+_fmtShort(C.tix)+').';
   return '';
 }
+// A date after the post's conference: allowed, but we ask first.
+function isPostEvent(p, ds){ const C = CONFS[confOf(p)]; return !!(ds && C && ds > C.date); }
+const POST_EVENT_Q = 'This is post-event. Are you sure you want this date?';
 // Older posts used Feb conf / Sept conf as their date type. Give every post a conference,
 // and turn those two old date types into Flexible (they were about the conference, not tickets).
 function migrateConf(){
@@ -1913,7 +1917,7 @@ function startPresence(){
 // ── ALWAYS THE NEWEST VERSION ──────────────────────────────────────────────
 // When the app comes back on screen, it checks for a newer version and reloads into it
 // (unless you're in the middle of editing or arranging). Your waiting changes are kept.
-const APP_VERSION = 'gathered-social-v12';
+const APP_VERSION = 'gathered-social-v13';
 (()=>{ const l = document.getElementById('app-version-lbl'); if(l) l.textContent = APP_VERSION.replace('gathered-social-v',''); })();
 async function checkForNewVersion(){
   try{
@@ -2412,6 +2416,7 @@ function calMoveTo(id, ds){
   const nice = d=>{ const x = new Date(d+'T12:00:00'); return MONTHS[x.getMonth()].slice(0,3)+' '+x.getDate(); };
   const name = '"' + calLabel(p.title) + '"';
   { const why = dateOk(p, ds); if(why){ showToast(name+' '+why); return; } }
+  if(isPostEvent(p, ds) && !confirm(POST_EVENT_Q)) return;
   if(false){ showToast(name+' is a Speaker post for the Feb conference, so it has to go out by Feb 27 (or set it to Sept conf).'); return; }
   const was = p.date;
   p.date = ds; touch(p,['date']); save(); renderMasterList();
@@ -2551,7 +2556,7 @@ function arrangeConfPills(){
     `<button class="chip c-conf conf-chip-${c}${c===arrangeConf?' active':''}" onclick="setArrangeConf('${c}')">${CONFS[c].icon} ${esc(CONFS[c].name)}</button>`).join('') + `</div>`;
 }
 function arrangeCandidates(){
-  return getFiltered().filter(p=>p.type==='social' && p.dateType!=='fixed' && confOf(p)===arrangeConf && !(p.date && new Date(p.date+'T12:00:00') < today));
+  return getFiltered().filter(p=>p.type==='social' && p.dateType!=='fixed' && confOf(p)===arrangeConf && !(p.date && new Date(p.date+'T12:00:00') < today) && !isPostEvent(p, p.date));
 }
 // Arrange has two steps: first you pick how ('choose'), then for your own order you drag ('manual').
 let arrangeStage = 'choose';
@@ -3305,13 +3310,13 @@ function applyDateLimits(){
   const c = selectedConf(), type = selectedDateType();
   if(!c){ input.min = ''; input.max = ''; if(type!=='fixed') hint.textContent = 'Pick which conference first.'; return; }
   const C = CONFS[c];
-  let min = C.lo || '', max = C.date;
+  let min = C.lo || '', max = '';   // no upper limit: post-event dates are allowed (we ask on save)
   if(C.tix && type==='premar1'){ const d = new Date(C.tix+'T12:00:00'); d.setDate(d.getDate()-1); max = d.toISOString().slice(0,10); }
   if(C.tix && type==='postmar1') min = C.tix;
   input.min = min; input.max = max;
   if(type==='fixed') hint.textContent = 'This post has to go out on this day.';
   else {
-    const range = (min ? _fmtShort(min)+' – ' : 'up to ') + _fmtShort(max);
+    const range = max ? (min ? _fmtShort(min)+' – ' : 'up to ') + _fmtShort(max) : (min ? 'from '+_fmtShort(min) : 'up to '+_fmtShort(C.date))+' (or after the conference, as a post-event post)';
     const tixNote = (type==='premar1'||type==='postmar1') && !C.tix ? ' (Ticket sale date isn\'t set yet.)' : '';
     hint.textContent = 'Leave blank to keep it unscheduled. Any date '+range+' works.'+tixNote;
   }
@@ -3410,6 +3415,8 @@ function savePost(){
   const date = document.getElementById('pm-date').value || '';
   if(dateType==='fixed' && !date){ alert('Pick a date, or choose Flexible to keep it unscheduled.'); return; }
   { const why = dateOk({conf, dateType}, date); if(why){ alert('This post '+why); return; } }
+  { const was = editingPostId ? (posts.find(x=>x.id===editingPostId)||{}) : {};
+    if(isPostEvent({conf}, date) && !(was.date===date && was.conf===conf) && !confirm(POST_EVENT_Q)) return; }
 
   const type = editingPostType;
   const purpose = document.getElementById('pm-purpose').value.trim();
