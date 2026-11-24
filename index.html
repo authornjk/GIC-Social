@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=54">
-<link rel="apple-touch-icon" sizes="180x180" href="./icon-180.png?v=54">
-<link rel="apple-touch-icon" sizes="152x152" href="./icon-152.png?v=54">
-<link rel="apple-touch-icon" sizes="120x120" href="./icon-120.png?v=54">
+<link rel="icon" href="./favicon.ico?v=60" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=60">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=60">
+<link rel="apple-touch-icon" sizes="180x180" href="./icon-180.png?v=60">
+<link rel="apple-touch-icon" sizes="152x152" href="./icon-152.png?v=60">
+<link rel="apple-touch-icon" sizes="120x120" href="./icon-120.png?v=60">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Gathered Social">
@@ -39,8 +41,10 @@ body{font-family:var(--fb);background:var(--cream);color:var(--black);min-height
 
 /* ── HEADER ── */
 .hdr{background:var(--hdr-olive);padding:calc(10px + env(safe-area-inset-top,0px)) 14px 0;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--burgundy)}
-.hdr-logo{display:block;height:64px;width:auto;max-width:62%;object-fit:contain;flex-shrink:1;min-width:0}
-.hdr-top{display:flex;align-items:center;gap:8px;padding-bottom:8px;flex-wrap:wrap}
+.hdr-logo{display:block;height:64px;width:auto;max-width:58%;object-fit:contain;flex-shrink:1;min-width:0;margin:0 auto}
+.hdr-top{display:flex;align-items:center;justify-content:center;gap:8px;padding-bottom:8px;flex-wrap:wrap;position:relative}
+.hdr-right{position:absolute;right:0;top:17px;display:flex;align-items:center;gap:6px}
+@media (min-width:900px){.hdr-logo{height:84px}.hdr-right{top:27px}}
 .app-title{font-family:var(--fd);font-size:22px;font-weight:400;color:var(--white);line-height:1}
 .app-sub{font-size:10px;font-weight:300;color:rgba(255,255,255,.5);letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
 .user-pill{font-size:11px;font-weight:600;color:var(--burgundy);background:var(--cream-d);border-radius:15px;min-width:30px;height:30px;flex-shrink:0;cursor:pointer;border:none;font-family:var(--fb);display:flex;align-items:center;justify-content:center;padding:0 9px}
@@ -53,7 +57,8 @@ body{font-family:var(--fb);background:var(--cream);color:var(--black);min-height
 .cd-badge b{font-weight:600}
 .cd-badge span.cd-num{font-family:var(--fb);font-size:13px;font-weight:600;font-variant-numeric:lining-nums tabular-nums;color:#fff;margin-right:3px}
 /* narrow phones: countdown line drops under the logo row */
-@media (max-width:640px){.cd-row{order:3;flex-basis:100%;padding-top:4px}.cd-badge,.cd-sep{font-size:11px}.cd-badge span.cd-num{font-size:12px}.hdr-top .user-pill{margin-left:auto}}
+.cd-row{order:3;flex-basis:100%;padding-top:2px;overflow-x:auto;scrollbar-width:none;justify-content:safe center}
+@media (max-width:640px){.cd-badge,.cd-sep{font-size:11px}.cd-badge span.cd-num{font-size:12px}.hdr-right .presence{display:none!important}}
 
 /* ── FILTER CHIPS ── */
 .filter-bar{background:var(--white);border-bottom:1px solid var(--cream-d);padding:7px 0 5px}
@@ -165,14 +170,8 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
 .drag-handle.pin{cursor:default;color:inherit;font-size:11px}
 .tab-proposed{opacity:.88;font-style:italic}
 .tab-conf{font-size:13px;line-height:1;margin-bottom:3px}
-.conf-div-feb .sd-lbl{color:var(--conf-feb);font-weight:600}
-.conf-div-sept .sd-lbl{color:var(--conf-sept);font-weight:600}
 /* First-glance conference color on the date tab: Feb = olive, Sept = terracotta */
-:root{--conf-feb:#6C7255;--conf-sept:#A56F52}
-.chip.conf-chip-feb.active{background:var(--conf-feb);border-color:var(--conf-feb);color:#fff}
-.chip.conf-chip-sept.active{background:var(--conf-sept);border-color:var(--conf-sept);color:#fff}
-#cp-feb.active{background:var(--conf-feb);border-color:var(--conf-feb);color:#fff}
-#cp-sept.active{background:var(--conf-sept);border-color:var(--conf-sept);color:#fff}
+/* each conference's colors (headings, chips, settings) are written by renderConfStyles() */
 .tab-none{font-size:8px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;line-height:1.25;opacity:.9}
 
 .card-body{flex:1;padding:7px 6px 7px 10px;min-width:0;display:flex;gap:8px;align-items:stretch}
@@ -340,6 +339,11 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
 .settings-hdr{padding:11px 14px;border-bottom:1px solid var(--cream-d);display:flex;align-items:center;justify-content:space-between}
 .settings-title{font-family:var(--fd);font-size:16px;font-weight:500}
 .settings-add{background:var(--sage);color:var(--white);border:none;border-radius:20px;padding:4px 12px;font-size:11px;font-family:var(--fb);cursor:pointer}
+.si-dot-btn{width:22px!important;height:22px!important;border:2px solid var(--white)!important;box-shadow:0 0 0 1px rgba(0,0,0,.2);cursor:pointer;vertical-align:-6px!important;padding:0}
+.cc-cust{position:relative;display:inline-block}
+.cc-x{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;border:none;background:var(--white);box-shadow:0 0 0 1px rgba(0,0,0,.2);font-size:9px;cursor:pointer;color:#666}
+.cc-custom-row{display:flex;gap:10px;align-items:center}
+.cc-custom-row input[type=color]{width:52px;height:40px;border:1px solid var(--gray);border-radius:8px;padding:2px;background:var(--white)}
 .si-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:0;background:var(--cat-other)}
 .si-dot.cat-author{background:var(--cat-author)}.si-dot.cat-general{background:var(--cat-general)}.si-dot.cat-tickets{background:var(--cat-tickets)}.si-dot.cat-event{background:var(--cat-event)}.si-dot.cat-fun{background:var(--cat-fun)}
 .si-btn:disabled{opacity:.3;cursor:default}
@@ -347,9 +351,10 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
 .settings-item:last-child{border-bottom:none}
 .si-label{font-size:13px}
 .si-sub{font-size:10px;color:#aaa;margin-top:1px}
+.cd-swatches{display:flex;flex-wrap:wrap;gap:10px;padding-top:2px}
+.cd-sw{width:36px;height:36px;border-radius:50%;border:3px solid transparent;cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.12) inset}
+.cd-sw.on{border-color:var(--black);box-shadow:0 0 0 2px var(--white) inset}
 .tix-input{font-family:var(--fb);font-size:16px;padding:6px 8px;border:1px solid var(--cream-d);border-radius:8px;background:var(--cream);color:var(--black);max-width:150px}
-.conf-set-feb .si-label{color:var(--conf-feb);font-weight:600}
-.conf-set-sept .si-label{color:var(--conf-sept);font-weight:600}
 .si-actions{display:flex;gap:6px;align-items:center;flex-shrink:0}
 .si-btn{border:none;background:var(--cream);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;font-family:var(--fb);white-space:nowrap}
 .si-btn.del{color:var(--coral-d)}
@@ -409,8 +414,10 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
   <div class="hdr-top">
     <img class="hdr-logo" src="./header-banner.png" alt="Gathered in Christ — Southern Utah Women’s Conference">
     <div class="cd-row" id="cd-row"></div>
-    <div class="presence" id="presence-chip" style="display:none"></div>
-    <button class="user-pill" onclick="openUserSwitch()" title="Switch user"><span id="current-user-display">…</span></button>
+    <div class="hdr-right">
+      <div class="presence" id="presence-chip" style="display:none"></div>
+      <button class="user-pill" onclick="openUserSwitch()" title="Switch user"><span id="current-user-display">…</span></button>
+    </div>
   </div>
 </div>
 
@@ -441,8 +448,7 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
   </div>
   <div class="filter-group" id="conf-filter-row">
     <span class="fg-lbl">Conference</span>
-    <button class="chip c-conf conf-chip-feb" onclick="toggleFilter('conf','feb',this)">🌸 Feb 27</button>
-    <button class="chip c-conf conf-chip-sept" onclick="toggleFilter('conf','sept',this)">🍂 Sept 18</button>
+    <span id="conf-filter-chips" style="display:contents"></span>
   </div>
   <div class="filter-group" id="cat-filter-row">
     <span class="fg-lbl">Category</span>
@@ -472,11 +478,11 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
   <!-- Settings page -->
   <div class="page" id="page-settings">
     <div class="settings-section">
-      <div class="settings-hdr"><div class="settings-title">Conferences</div></div>
+      <div class="settings-hdr"><div class="settings-title">Conferences</div><button class="settings-add" onclick="openConfSheet(null)">+ Add</button></div>
       <div id="conf-settings-list"></div>
-    </div>
+          </div>
     <div class="settings-section">
-      <div class="settings-hdr"><div class="settings-title">Countdowns</div><button class="settings-add" onclick="openAddCountdown()">+ Add</button></div>
+      <div class="settings-hdr"><div class="settings-title">Other countdowns</div><button class="settings-add" onclick="openAddCountdown()">+ Add</button></div>
       <div id="cd-settings-list"></div>
     </div>
     <div class="settings-section">
@@ -544,8 +550,6 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
       <div class="ef" id="pm-date-section">
         <label class="ef-lbl">Which conference?</label>
         <div class="date-pills conf-pills" id="pm-conf-pills">
-          <button class="date-pill conf-pill" id="cp-feb" onclick="selectConf('feb')">🌸 Feb 27</button>
-          <button class="date-pill conf-pill" id="cp-sept" onclick="selectConf('sept')">🍂 Sept 18</button>
         </div>
         <label class="ef-lbl" id="pm-date-lbl" style="margin-top:12px">Date</label>
         <div class="date-pills" id="pm-date-pills">
@@ -665,20 +669,31 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
       <div class="modal-title" id="cd-modal-title">Countdown</div>
       <button class="modal-close-btn" onclick="closeModal('cd-modal')">✕</button>
     </div>
-    <div class="ef"><label class="ef-lbl">Label</label><input class="ef-input" id="cd-label"></div>
+    <div class="ef"><label class="ef-lbl">Name</label><input class="ef-input" id="cd-label"></div>
     <div class="ef"><label class="ef-lbl">Date</label><input class="ef-input" id="cd-date" type="date"></div>
+    <div class="ef" id="cd-tix-row"><label class="ef-lbl">Tickets go on sale</label><input class="ef-input" id="cd-tix" type="date">
+      <div class="ef-hint" id="cd-tix-hint" style="font-size:11px;color:#888;margin-top:4px">Leave blank until you know it.</div></div>
     <div class="ef"><label class="ef-lbl">Color</label>
-      <select class="ef-input" id="cd-color">
-        <option value="#6C7255">Olive</option>
-        <option value="#A56F52">Terracotta</option>
-        <option value="#A04C54">Rose</option>
-        <option value="#541B1E">Burgundy</option>
-        <option value="#6B7152">Sage</option>
-        <option value="#C68B63">Clay</option>
-      </select>
+      <input type="hidden" id="cd-color">
+      <div class="cd-swatches" id="cd-swatches"></div>
     </div>
     <button class="btn-save" onclick="saveCountdown()">Save</button>
     <button class="btn-del" id="cd-del-btn" style="display:none" onclick="deleteCountdown()">Remove</button>
+  </div>
+</div>
+<div class="modal-ov" id="cc-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-top">
+      <div class="modal-title" id="cc-modal-title">Category color</div>
+      <button class="modal-close-btn" onclick="closeModal('cc-modal')">✕</button>
+    </div>
+    <div class="ef"><label class="ef-lbl">Brand colors</label><div class="cd-swatches" id="cc-palette"></div></div>
+    <div class="ef"><label class="ef-lbl">Your colors</label><div class="cd-swatches" id="cc-customs"></div></div>
+    <div class="ef"><label class="ef-lbl">Add a custom color</label>
+      <div class="cc-custom-row"><input type="color" id="cc-custom" value="#6C7255"><button class="si-btn" onclick="addCustomColor()">Use this color</button></div>
+    </div>
+    <button class="btn-save" onclick="closeModal('cc-modal')">Done</button>
   </div>
 </div>
 
@@ -757,36 +772,106 @@ window.dispatchEvent(new Event('firebase-ready'));
 document.head.appendChild(_fbScript1);
 
 // ── DEFAULTS ──────────────────────────────────────────────────────────────
-// Two conferences. Every post belongs to one (p.conf), and its date type is about that
+// Conferences. Every post belongs to one (p.conf), and its date type is about that
 // conference: Fixed, Pre-tickets (before its tickets go on sale), Post-tickets, or Flexible.
 // tix = the day tickets go on sale; leave '' until it's known (then Pre/Post-tickets don't split).
-const CONFS = {
-  feb:  {name:'Feb',  long:'Feb 27 conference',  icon:'🌸', date:'2027-02-27', lo:'',           tix:''},
-  sept: {name:'Sept', long:'Sept 18 conference', icon:'🍂', date:'2027-09-18', lo:'2027-02-28', tix:''},
+// Feb and Sept 2027 are built in; more are added in Settings → Conferences (shared via ss_meta/confs).
+// A conference's window starts the day after the conference before it (lo), and ends on its date.
+const CONF_COLORS = ['#A04C54','#541B1E','#C08A61','#868B6F'];   // rose, burgundy, light terracotta, dark sage
+const BASE_CONFS = {
+  feb:  {name:'Feb 27',  long:'Feb 27 conference',  icon:'🌸', date:'2027-02-27', color:'#6C7255', tix:''},
+  sept: {name:'Sept 18', long:'Sept 18 conference', icon:'🍂', date:'2027-09-18', color:'#A56F52', tix:''},
 };
-// Ticket sale dates are kept on this device and shared through the cloud (ss_meta/confs).
-try{ const saved = JSON.parse(localStorage.getItem('gs_confs')||'{}'); Object.keys(saved).forEach(c=>{ if(CONFS[c] && typeof saved[c].tix==='string') CONFS[c].tix = saved[c].tix; }); }catch(e){}
+const CONFS = JSON.parse(JSON.stringify(BASE_CONFS));
+let _confExtra = {};   // added conferences: key -> {name, date, icon, color}
+function _confIcon(ds){ const m = +ds.slice(5,7); return m<=5 ? '🌸' : m<=8 ? '☀️' : m<=11 ? '🍂' : '❄️'; }
+function _confDefaultName(ds){ const d = new Date(ds+'T12:00:00'); return ['Jan','Feb','Mar','Apr','May','June','July','Aug','Sept','Oct','Nov','Dec'][d.getMonth()]+' '+d.getDate()+', '+d.getFullYear(); }
+// rebuild CONFS from the built-in two plus the added ones, and work out each window's start
+function rebuildConfs(){
+  const tix = {}; Object.keys(CONFS).forEach(c=>{ tix[c] = CONFS[c].tix; delete CONFS[c]; });
+  const cdName = ds=>{ try{ const cd = (countdowns||[]).find(x=>x.date===ds); return cd ? String(cd.label).replace(/^the\s+/i,'') : ''; }catch(e){ return ''; } };
+  const mk = (base, x, added)=>{ const date = (x && x.date) || base.date;
+    const name = (x && x.name) || cdName(date) || base.name || _confDefaultName(date);
+    return {name, long: name + (/conference/i.test(name) ? '' : ' conference'), icon: (x && x.icon) || base.icon || _confIcon(date), date,
+            color: (x && x.color) || base.color || CONF_COLORS[0], tix:'', added}; };
+  Object.keys(BASE_CONFS).forEach(c=>{ CONFS[c] = mk(BASE_CONFS[c], _confExtra[c], false); });
+  Object.keys(_confExtra).forEach(c=>{ const x = _confExtra[c]; if(BASE_CONFS[c] || !x || !x.date) return; CONFS[c] = mk({}, x, true); });
+  const keys = Object.keys(CONFS).sort((a,b)=>CONFS[a].date.localeCompare(CONFS[b].date));
+  keys.forEach((c,i)=>{
+    CONFS[c].tix = tix[c] || '';
+    if(i===0){ CONFS[c].lo = ''; return; }
+    const d = new Date(CONFS[keys[i-1]].date+'T12:00:00'); d.setDate(d.getDate()+1); CONFS[c].lo = d.toISOString().slice(0,10);
+  });
+  renderConfStyles();
+}
+function renderConfStyles(){
+  let el = document.getElementById('conf-styles');
+  if(!el){ el = document.createElement('style'); el.id = 'conf-styles'; document.head.appendChild(el); }
+  el.textContent = Object.keys(CONFS).map(c=>{ const k = CONFS[c].color;
+    return `.conf-div-${c} .sd-lbl{color:${k};font-weight:600}
+.chip.conf-chip-${c}.active,#cp-${c}.active{background:${k};border-color:${k};color:#fff}
+.conf-set-${c} .si-label{color:${k};font-weight:600}`; }).join('\n');
+}
+// Ticket sale dates and added conferences are kept on this device and shared through the cloud (ss_meta/confs).
+try{
+  const saved = JSON.parse(localStorage.getItem('gs_confs')||'{}');
+  _confExtra = JSON.parse(localStorage.getItem('gs_confs_extra')||'{}') || {};
+  rebuildConfs();
+  Object.keys(saved).forEach(c=>{ if(CONFS[c] && typeof saved[c].tix==='string') CONFS[c].tix = saved[c].tix; });
+}catch(e){ rebuildConfs(); }
 function confSettings(){ const o = {}; Object.keys(CONFS).forEach(c=>{ o[c] = {tix: CONFS[c].tix}; }); return o; }
+function _storeConfs(){ try{ localStorage.setItem('gs_confs', JSON.stringify(confSettings())); localStorage.setItem('gs_confs_extra', JSON.stringify(_confExtra)); }catch(e){} }
+function _shareConfs(){
+  if(window._firestoreDB) window._fbSetDoc(window._fbDoc(window._firestoreDB,'ss_meta','confs'), {id:'confs', confs:confSettings(), extra:_confExtra, at:Date.now(), by:(typeof currentUser!=='undefined' && currentUser)||''}).catch(()=>{});
+}
 function adoptConfSettings(d){
-  if(!d || !d.confs) return false;
+  if(!d) return false;
   let changed = false;
-  Object.keys(d.confs).forEach(c=>{ const t = d.confs[c] && d.confs[c].tix; if(CONFS[c] && typeof t==='string' && t!==CONFS[c].tix){ CONFS[c].tix = t; changed = true; } });
-  if(changed) try{ localStorage.setItem('gs_confs', JSON.stringify(confSettings())); }catch(e){}
+  if(d.extra && typeof d.extra==='object' && JSON.stringify(d.extra) !== JSON.stringify(_confExtra)){
+    _confExtra = d.extra; rebuildConfs(); changed = true;
+  }
+  if(d.confs) Object.keys(d.confs).forEach(c=>{ const t = d.confs[c] && d.confs[c].tix; if(CONFS[c] && typeof t==='string' && t!==CONFS[c].tix){ CONFS[c].tix = t; changed = true; } });
+  if(changed){ _storeConfs(); if(typeof renderConfChoices==='function') renderConfChoices(); }
   return changed;
 }
 function setTicketDate(c, ds){
   const C = CONFS[c]; if(!C) return;
   if(ds && (ds > C.date || (C.lo && ds < C.lo))){ alert('Tickets for the '+C.long+' need to go on sale '+(C.lo?'between '+_fmtShort(C.lo)+' and ':'on or before ')+_fmtShort(C.date)+'.'); renderSettingsPage(); return; }
   C.tix = ds || '';
-  try{ localStorage.setItem('gs_confs', JSON.stringify(confSettings())); }catch(e){}
-  if(window._firestoreDB) window._fbSetDoc(window._fbDoc(window._firestoreDB,'ss_meta','confs'), {id:'confs', confs:confSettings(), at:Date.now(), by:(typeof currentUser!=='undefined' && currentUser)||''}).catch(()=>{});
+  _storeConfs(); _shareConfs();
   renderSettingsPage(); renderMasterList();
   showToast(C.long + (ds ? ': tickets go on sale ' + _fmtShort(ds) : ': ticket date cleared'));
 }
+function removeConference(c){
+  const C = CONFS[c]; if(!C || !C.added) return;
+  const n = posts.filter(p=>p.conf===c).length;
+  if(n){ alert('The '+C.long+' still has '+n+' post'+(n>1?'s':'')+'. Move or delete '+(n>1?'them':'it')+' first.'); return; }
+  if(!confirm('Remove the '+C.long+'?')) return;
+  const cd = countdowns.find(x=>x.date===C.date);
+  if(cd){ countdowns = countdowns.filter(x=>x!==cd); if(window._firestoreDB) deleteFromFirestore('ss_cds2', cd.id); save(); }
+  delete _confExtra[c]; rebuildConfs(); _storeConfs(); _shareConfs();
+  closeModal('cd-modal'); renderCountdowns();
+  activeConfFilters.delete(c);
+  renderConfChoices(); renderSettingsPage(); renderMasterList();
+}
+// conference filter chips and the "Which conference?" pills in the post form
+function renderConfChoices(){
+  const order = confOrder();
+  const f = document.getElementById('conf-filter-chips');
+  if(f) f.innerHTML = order.map(c=>`<button class="chip c-conf conf-chip-${c}${activeConfFilters.has(c)?' active':''}" onclick="toggleFilter('conf','${c}',this)">${CONFS[c].icon} ${esc(CONFS[c].name)}</button>`).join('');
+  const pills = document.getElementById('pm-conf-pills');
+  if(pills){ const cur = selectedConf();
+    pills.innerHTML = order.map(c=>`<button class="date-pill conf-pill${c===cur?' active':''}" id="cp-${c}" data-conf="${c}" onclick="selectConf('${c}')">${CONFS[c].icon} ${esc(CONFS[c].name)}</button>`).join(''); }
+}
+// which conference a date falls in (the first one on or after it)
+function confForDate(ds){
+  const keys = Object.keys(CONFS).sort((a,b)=>CONFS[a].date.localeCompare(CONFS[b].date));
+  return keys.find(c=>ds <= CONFS[c].date) || keys[keys.length-1];
+}
 function confOf(p){
   if(p && CONFS[p.conf]) return p.conf;
-  if(p && p.dateType==='postmar1') return 'sept';
-  if(p && p.date && p.date >= CONFS.sept.lo) return 'sept';
+  if(p && p.dateType==='postmar1' && !p.date) return 'sept';
+  if(p && p.date) return confForDate(p.date);
   return 'feb';
 }
 // the stretch the scheduler fills for a conference (up to the day before it)
@@ -799,8 +884,7 @@ const _fmtShort = ds=>{ const d = new Date(ds+'T12:00:00'); return MONTHS[d.getM
 function dateOk(p, ds){
   if(!ds) return '';
   const c = confOf(p), C = CONFS[c];
-  if(c==='feb' && ds > C.date) return 'is for the Feb conference, so it needs a date on or before Feb 27.';
-  if(c==='sept' && (ds < C.lo || ds > C.date)) return 'is for the Sept conference, so it needs a date between Feb 28 and Sept 18.';
+  if(ds > C.date || (C.lo && ds < C.lo)) return 'is for the '+C.long+', so it needs a date '+(C.lo ? 'between '+_fmtShort(C.lo)+' and '+_fmtShort(C.date) : 'on or before '+_fmtShort(C.date))+'.';
   if(C.tix && p.dateType==='premar1' && ds >= C.tix) return 'is set to Pre-tickets, so it needs a date before tickets go on sale ('+_fmtShort(C.tix)+').';
   if(C.tix && p.dateType==='postmar1' && ds < C.tix) return 'is set to Post-tickets, so it needs a date on or after tickets go on sale ('+_fmtShort(C.tix)+').';
   return '';
@@ -1473,7 +1557,7 @@ async function loadFromFirestoreAll(){
     adoptConfSettings((fsMeta||[]).find(d=>d.id==='confs'));
     const metaCats = (fsMeta||[]).find(d=>d.id==='cats');
     if(adoptCats(metaCats)) changed = true;
-    if(metaCats) window._syncedCats = stableJSON({list:metaCats.list, alias:metaCats.alias||{}});
+    if(metaCats) window._syncedCats = stableJSON({list:metaCats.list, alias:metaCats.alias||{}, removed:metaCats.removed||[], colors:metaCats.colors||{}, custom:metaCats.custom||[]});
     window._catsLoaded = true;
     if(!metaCats) saveCats();   // first phone to get this version shares its list
     if(fsPosts && fsPosts.length > 0){ rescueUnsentPosts(fsPosts); rememberSynced(fsPosts); posts = sortByOrder(mergePending(fsPosts)); dropGone();
@@ -1549,10 +1633,10 @@ function allCats(){
 function saveCats(){
   localStorage.setItem('ss_cats2', JSON.stringify(cats));
   try{ localStorage.setItem('ss_catalias', JSON.stringify(catAlias)); localStorage.setItem('ss_cats_removed', JSON.stringify(catsRemoved)); }catch(e){}
-  const cj = stableJSON({list:cats, alias:catAlias, removed:catsRemoved});
+  const cj = stableJSON({list:cats, alias:catAlias, removed:catsRemoved, colors:catColors, custom:customColors});
   if(window._firestoreDB && window._catsLoaded && cj !== window._syncedCats){
     window._syncedCats = cj;
-    window._fbSetDoc(window._fbDoc(window._firestoreDB,'ss_meta','cats'), {id:'cats', list:cats, alias:catAlias, removed:catsRemoved, at:Date.now()}).catch(()=>{ window._syncedCats = null; });
+    window._fbSetDoc(window._fbDoc(window._firestoreDB,'ss_meta','cats'), {id:'cats', list:cats, alias:catAlias, removed:catsRemoved, colors:catColors, custom:customColors, at:Date.now()}).catch(()=>{ window._syncedCats = null; });
   }
 }
 function adoptCats(d){
@@ -1561,12 +1645,15 @@ function adoptCats(d){
   const merged = d.list.slice();
   cats.forEach(c=>{ if(!merged.includes(c) && !removed.includes(c)) merged.push(c); });   // keep additions made here
   const alias = {...catAlias, ...(d.alias||{})};
-  const before = stableJSON({cats, catAlias, catsRemoved});
+  const before = stableJSON({cats, catAlias, catsRemoved, catColors, customColors});
   cats = merged; catAlias = alias; catsRemoved = removed;
+  if(d.colors && typeof d.colors==='object') catColors = d.colors;
+  if(Array.isArray(d.custom)) customColors = d.custom;
+  _storeCatColors(); renderCatStyles();
   localStorage.setItem('ss_cats2', JSON.stringify(cats));
   try{ localStorage.setItem('ss_catalias', JSON.stringify(catAlias)); localStorage.setItem('ss_cats_removed', JSON.stringify(catsRemoved)); }catch(e){}
   if(stableJSON({list:cats, alias:catAlias, removed:catsRemoved}) !== stableJSON({list:d.list, alias:d.alias||{}, removed:d.removed||[]})) setTimeout(saveCats, 500);
-  return before !== stableJSON({cats, catAlias, catsRemoved});
+  return before !== stableJSON({cats, catAlias, catsRemoved, catColors, customColors});
 }
 // After you arrange: number the posts in their new order (only posts whose place changed get a new rev)
 function renumberOrder(){
@@ -1825,7 +1912,7 @@ function startPresence(){
 // ── ALWAYS THE NEWEST VERSION ──────────────────────────────────────────────
 // When the app comes back on screen, it checks for a newer version and reloads into it
 // (unless you're in the middle of editing or arranging). Your waiting changes are kept.
-const APP_VERSION = 'gathered-social-v8';
+const APP_VERSION = 'gathered-social-v9';
 (()=>{ const l = document.getElementById('app-version-lbl'); if(l) l.textContent = APP_VERSION.replace('gathered-social-v',''); })();
 async function checkForNewVersion(){
   try{
@@ -1851,10 +1938,58 @@ const BASE_CAT_COLOR = {'Speaker':'#A04C54','Inspiration':'#868B6F','Registratio
 let catAlias = (()=>{ try{ return JSON.parse(localStorage.getItem('ss_catalias')||'{}'); }catch(e){ return {}; } })();
 function catKey(cat){ return catAlias[cat] || cat; }                       // current name -> built-in name
 function catName(base){ return Object.keys(catAlias).find(k=>catAlias[k]===base) || base; } // built-in -> current name
-function catColor(cat){ return BASE_CAT_COLOR[catKey(cat)] || '#A7AB96'; }
+// Colors people pick in Settings → Categories (shared via ss_meta/cats). Keyed by the built-in
+// name for built-ins, so a renamed built-in keeps its color.
+let catColors = (()=>{ try{ return JSON.parse(localStorage.getItem('ss_catcolors')||'{}') || {}; }catch(e){ return {}; } })();
+let customColors = (()=>{ try{ return JSON.parse(localStorage.getItem('ss_customcolors')||'[]') || []; }catch(e){ return []; } })();
+const PALETTE = [['#6C7255','Olive'],['#541B1E','Burgundy'],['#A04C54','Rose'],['#A56F52','Terracotta'],['#C08A61','Light terracotta'],['#868B6F','Dark sage'],['#A7AB96','Sage'],['#4F5440','Deep olive']];
+function catColor(cat){ return catColors[catKey(cat)] || BASE_CAT_COLOR[catKey(cat)] || '#A7AB96'; }
+const _ccId = cat=>{ let h = 0; const k = String(catKey(cat)); for(let i=0;i<k.length;i++) h = (h*31 + k.charCodeAt(i))|0; return 'cc-'+(h>>>0).toString(36); };
 function catClass(cat){
   if(!cat) return 'cat-misc';
-  return BASE_CAT_CLASS[catKey(cat)] || 'cat-other';
+  return (BASE_CAT_CLASS[catKey(cat)] || 'cat-other') + ' ' + _ccId(cat);
+}
+// one CSS rule set per category, so whatever color is picked shows on the date tab, tag, chip and dot
+function renderCatStyles(){
+  let el = document.getElementById('cat-styles');
+  if(!el){ el = document.createElement('style'); el.id = 'cat-styles'; document.head.appendChild(el); }
+  const list = (typeof allCats==='function' && typeof posts!=='undefined' && posts) ? allCats() : (cats||[]);
+  el.textContent = list.map(cat=>{ const id = _ccId(cat), k = catColor(cat);
+    return `.${id} .card-stripe,.${id} .card-cat-tag{background:${k};color:#fff}
+.cat-chip.active.${id}{background:${k};border-color:${k};color:#fff}
+.si-dot.${id}{background:${k}}`; }).join('\n');
+}
+function _storeCatColors(){ try{ localStorage.setItem('ss_catcolors', JSON.stringify(catColors)); localStorage.setItem('ss_customcolors', JSON.stringify(customColors)); }catch(e){} }
+let _colorCat = null;
+function openCatColor(i){
+  _colorCat = cats[i]; if(!_colorCat) return;
+  document.getElementById('cc-modal-title').textContent = 'Color for ' + _colorCat;
+  document.getElementById('cc-custom').value = catColor(_colorCat);
+  renderCatColorChoices();
+  openModal('cc-modal');
+}
+function renderCatColorChoices(){
+  const cur = catColor(_colorCat).toLowerCase();
+  const sw = ([v,n],custom)=>`<button type="button" class="cd-sw${v.toLowerCase()===cur?' on':''}" style="background:${v}" title="${esc(n)}" aria-label="${esc(n)}" onclick="setCatColor('${v}')"></button>`;
+  document.getElementById('cc-palette').innerHTML = PALETTE.map(x=>sw(x)).join('');
+  document.getElementById('cc-customs').innerHTML = customColors.length
+    ? customColors.map(v=>`<span class="cc-cust">${sw([v,'Your color '+v])}<button type="button" class="cc-x" title="Take this color off the list" onclick="removeCustomColor('${v}')">✕</button></span>`).join('')
+    : '<div style="font-size:11px;color:#999">None yet. Add one below.</div>';
+}
+function setCatColor(v){
+  if(!_colorCat) return;
+  const key = catKey(_colorCat);
+  if(BASE_CAT_COLOR[key] && BASE_CAT_COLOR[key].toLowerCase()===v.toLowerCase()) delete catColors[key]; else catColors[key] = v;
+  _storeCatColors(); saveCats(); catsChanged(); renderCatColorChoices();
+}
+function addCustomColor(){
+  const v = document.getElementById('cc-custom').value;
+  if(!/^#[0-9a-f]{6}$/i.test(v)) return;
+  if(!customColors.some(x=>x.toLowerCase()===v.toLowerCase()) && !PALETTE.some(x=>x[0].toLowerCase()===v.toLowerCase())) customColors.push(v);
+  setCatColor(v);
+}
+function removeCustomColor(v){
+  customColors = customColors.filter(x=>x!==v); _storeCatColors(); saveCats(); renderCatColorChoices();
 }
 function emailClass(){ return 'cat-email'; }
 
@@ -1894,6 +2029,7 @@ function toggleFilter(group, value, btn){
 
 // ── COUNTDOWNS ─────────────────────────────────────────────────────────────
 function renderCountdowns(){
+  rebuildConfs();
   const row = document.getElementById('cd-row');
   row.innerHTML = countdowns.map(cd=>{
     const d = dateDiff(cd.date);
@@ -2556,7 +2692,7 @@ function shuffleAndPreview(again){
   const onScreen = cards.map(c=>posts.find(p=>p.id===c.dataset.id)).filter(Boolean);
   const movable = onScreen.filter(p=>p.dateType!=='fixed');
   if(movable.length < 2){ alert('There aren\'t enough posts here to shuffle.'); return; }
-  const order = arrangeGroups(['feb','sept'].flatMap(c=>{
+  const order = arrangeGroups(Object.keys(CONFS).sort((a,b)=>CONFS[a].date.localeCompare(CONFS[b].date)).flatMap(c=>{
     const m = movable.filter(p=>confOf(p)===c);
     return [m.filter(p=>p.dateType==='premar1'), m.filter(p=>p.dateType==='flexible' || !p.dateType), m.filter(p=>p.dateType==='postmar1')];
   }));
@@ -2729,7 +2865,7 @@ function computeProposal(orderedIds, startStr){
   const used = new Set(posts.filter(p=>p.dateType==='fixed' && p.date).map(p=>p.date));
   const out = posts.filter(p=>p.type==='social' && p.dateType==='fixed' && p.date && p.date >= startStr)
     .map(p=>({id:p.id, date:p.date||'', title:p.title, dateType:p.dateType, kept:true}));
-  ['feb','sept'].forEach(c=>{
+  Object.keys(CONFS).forEach(c=>{
     const ids = orderedIds.filter(id=>{ const p = posts.find(x=>x.id===id); return p && p.dateType!=='fixed' && confOf(p)===c; });
     if(!ids.length) return;
     const W = confWindows(c);
@@ -3055,8 +3191,9 @@ function showPostFields(type, p){
   else if(dateType==='flexible') document.getElementById('dp-flexible').classList.add('active');
   else if(dateType==='premar1') document.getElementById('dp-premarx').classList.add('active');
   else if(dateType==='postmar1') document.getElementById('dp-postmar').classList.add('active');
-  const conf = p ? confOf(p) : (_prefillDate ? (_prefillDate >= CONFS.sept.lo ? 'sept' : 'feb') : '');
-  if(conf) document.getElementById('cp-'+conf).classList.add('active');
+  const conf = p ? confOf(p) : (_prefillDate ? confForDate(_prefillDate) : '');
+  renderConfChoices(); document.querySelectorAll('.conf-pill').forEach(x=>x.classList.remove('active'));
+  if(conf && document.getElementById('cp-'+conf)) document.getElementById('cp-'+conf).classList.add('active');
   document.getElementById('pm-date').value = p ? (p.date||'') : (_prefillDate||'');
   updateDateRow(dateType);
 
@@ -3132,10 +3269,10 @@ function getSelectedCat(){
   return active ? (active.dataset.cat||active.textContent.trim()) : '';
 }
 
-function selectedConf(){ return document.getElementById('cp-feb').classList.contains('active') ? 'feb' : document.getElementById('cp-sept').classList.contains('active') ? 'sept' : ''; }
+function selectedConf(){ const a = document.querySelector('.conf-pill.active'); return a ? a.dataset.conf : ''; }
 function selectConf(c){
-  ['cp-feb','cp-sept'].forEach(id=>document.getElementById(id).classList.remove('active'));
-  if(c) document.getElementById('cp-'+c).classList.add('active');
+  document.querySelectorAll('.conf-pill').forEach(x=>x.classList.remove('active'));
+  if(c && document.getElementById('cp-'+c)) document.getElementById('cp-'+c).classList.add('active');
   applyDateLimits();
 }
 function selectedDateType(){
@@ -3438,33 +3575,78 @@ function copyCaption(){
 }
 
 // ── COUNTDOWN ─────────────────────────────────────────────────────────────
-function openAddCountdown(){
-  editingCdId = null;
-  document.getElementById('cd-modal-title').textContent = 'Add Countdown';
-  document.getElementById('cd-label').value = '';
-  document.getElementById('cd-date').value = '';
-  document.getElementById('cd-color').value = '#6C7255';
-  document.getElementById('cd-del-btn').style.display = 'none';
+// One sheet for conferences and countdowns. A conference has a name, its date, the day
+// tickets go on sale and a color; its countdown in the top bar follows it. A countdown to any
+// other day is just a countdown (fill in a ticket date and it becomes a conference).
+let _cdConf = null;   // conference key the sheet is editing, 'new' for a new conference, null for a plain countdown
+const CD_COLORS = [['#6C7255','Olive'],['#A56F52','Terracotta'],['#A04C54','Rose'],['#541B1E','Burgundy'],['#C08A61','Light terracotta'],['#868B6F','Sage']];
+function _pickCdColor(k){
+  document.getElementById('cd-color').value = k;
+  const list = CD_COLORS.some(x=>x[0].toLowerCase()===String(k).toLowerCase()) ? CD_COLORS : CD_COLORS.concat([[k,'Current color']]);
+  document.getElementById('cd-swatches').innerHTML = list.map(([v,n])=>`<button type="button" class="cd-sw${v.toLowerCase()===String(k).toLowerCase()?' on':''}" style="background:${v}" title="${n}" aria-label="${n}" onclick="_pickCdColor('${v}')"></button>`).join('');
+}
+function _confByDate(ds){ return Object.keys(CONFS).find(c=>CONFS[c].date===ds) || null; }
+function _fillCdSheet(title, label, date, tix, color, canDelete){
+  document.getElementById('cd-modal-title').textContent = title;
+  document.getElementById('cd-label').value = label;
+  document.getElementById('cd-date').value = date;
+  document.getElementById('cd-tix').value = tix;
+  document.getElementById('cd-tix-hint').textContent = _cdConf ? 'Leave blank until you know it.' : 'Only for a conference. Fill it in and this becomes a conference too.';
+  _pickCdColor(color);
+  const del = document.getElementById('cd-del-btn'); del.style.display = canDelete ? '' : 'none'; del.classList.remove('confirming'); del.textContent = 'Remove';
   openModal('cd-modal');
+}
+function openConfSheet(c){
+  const C = c ? CONFS[c] : null;
+  const cd = C ? countdowns.find(x=>x.date===C.date) : null;
+  editingCdId = cd ? cd.id : null; _cdConf = c || 'new';
+  const used = Object.values(CONFS).map(x=>x.color);
+  _fillCdSheet(C ? 'Edit Conference' : 'Add Conference', C ? C.name : '', C ? C.date : '', C ? C.tix : '',
+    C ? C.color : (CONF_COLORS.find(k=>!used.includes(k)) || CONF_COLORS[0]), !!(C && C.added));
+}
+function openAddCountdown(){
+  editingCdId = null; _cdConf = null;
+  _fillCdSheet('Add Countdown', '', '', '', '#6C7255', false);
 }
 function openEditCountdown(id){
   const cd = countdowns.find(c=>c.id===id); if(!cd) return;
-  editingCdId = id;
-  document.getElementById('cd-modal-title').textContent = 'Edit Countdown';
-  document.getElementById('cd-label').value = cd.label;
-  document.getElementById('cd-date').value = cd.date;
-  document.getElementById('cd-color').value = cd.color;
-  document.getElementById('cd-del-btn').style.display = '';
-  openModal('cd-modal');
+  const c = _confByDate(cd.date);
+  if(c){ openConfSheet(c); return; }
+  editingCdId = id; _cdConf = null;
+  _fillCdSheet('Edit Countdown', cd.label, cd.date, '', cd.color || '#6C7255', true);
 }
 function saveCountdown(){
-  const d = {label:document.getElementById('cd-label').value, date:document.getElementById('cd-date').value, color:document.getElementById('cd-color').value};
-  if(!d.label||!d.date) return;
-  if(editingCdId){ const i=countdowns.findIndex(c=>c.id===editingCdId); countdowns[i]={...countdowns[i],...d}; }
-  else countdowns.push({...d, id:uid()});
-  save(); closeModal('cd-modal'); renderCountdowns(); renderSettingsPage();
+  const label = document.getElementById('cd-label').value.trim(), date = document.getElementById('cd-date').value;
+  const tix = document.getElementById('cd-tix').value, color = document.getElementById('cd-color').value;
+  if(!label || !date){ alert('Give it a name and a date.'); return; }
+  const oldCd = editingCdId ? countdowns.find(x=>x.id===editingCdId) : null;
+  let c = (_cdConf && _cdConf!=='new') ? _cdConf : null;
+  const makeConf = c || _cdConf==='new' || tix;
+  if(makeConf){
+    const other = _confByDate(date);
+    if(other && other!==c){ alert('There is already a conference on that day.'); return; }
+    if(tix && tix > date){ alert('Tickets need to go on sale on or before the conference.'); return; }
+    if(!c) c = 'c' + date.replace(/-/g,'');
+    const prevExtra = _confExtra[c];
+    _confExtra[c] = {...(_confExtra[c]||{}), name:label, date, color};
+    rebuildConfs();
+    if(tix && CONFS[c].lo && tix < CONFS[c].lo){
+      const lo = CONFS[c].lo;
+      if(prevExtra) _confExtra[c] = prevExtra; else delete _confExtra[c]; rebuildConfs();
+      alert('Tickets for this conference need to go on sale on or after '+_fmtShort(lo)+', the day after the conference before it.'); return;
+    }
+    CONFS[c].tix = tix || '';
+    _storeConfs(); _shareConfs();
+  }
+  const cd = oldCd || (c ? countdowns.find(x=>x.date===date) : null);
+  if(cd) Object.assign(cd, {label, date, color});
+  else countdowns.push({id:uid(), label, date, color});
+  save(); closeModal('cd-modal');
+  rebuildConfs(); renderConfChoices(); renderCountdowns(); renderSettingsPage(); renderMasterList();
+  if(c) showToast(CONFS[c].long + ' saved');
 }
 function deleteCountdown(){
+  if(_cdConf && _cdConf!=='new' && CONFS[_cdConf] && CONFS[_cdConf].added){ removeConference(_cdConf); return; }
   const btn = document.getElementById('cd-del-btn');
   if(!btn.classList.contains('confirming')){
     btn.classList.add('confirming'); btn.textContent='Tap again to confirm';
@@ -3526,16 +3708,16 @@ function renderSettingsPage(){
   // Conferences: ticket sale date for each (shared with everyone)
   document.getElementById('conf-settings-list').innerHTML = confOrder().map(c=>{ const C = CONFS[c]; return `
     <div class="settings-item conf-set conf-set-${c}">
-      <div><div class="si-label">${C.icon} ${C.long}</div><div class="si-sub">Tickets go on sale: ${C.tix ? _fmtShort(C.tix) + ', ' + C.tix.slice(0,4) : 'not set yet'}</div></div>
+      <div><div class="si-label">${C.icon} ${esc(C.long)}</div><div class="si-sub">${_fmtShort(C.date)}, ${C.date.slice(0,4)}</div><div class="si-sub">🎟️ Tickets go on sale: ${C.tix ? '<b>'+_fmtShort(C.tix) + ', ' + C.tix.slice(0,4)+'</b>' : 'not set yet'}</div></div>
       <div class="si-actions">
-        <input type="date" class="tix-input" id="tix-${c}" value="${C.tix||''}" max="${C.date}" ${C.lo?`min="${C.lo}"`:''} onchange="setTicketDate('${c}', this.value)" aria-label="${C.long} ticket sale date">
-        ${C.tix ? `<button class="si-btn del" onclick="setTicketDate('${c}','')" aria-label="Clear ticket date">✕</button>` : ''}
+        <button class="si-btn" onclick="openConfSheet('${c}')">Edit</button>
       </div>
     </div>`; }).join('');
   // Countdowns
-  document.getElementById('cd-settings-list').innerHTML = countdowns.map(cd=>`
+  const _otherCds = countdowns.filter(cd=>!_confByDate(cd.date));
+  document.getElementById('cd-settings-list').innerHTML = (_otherCds.length ? '' : '<div class="settings-item"><div class="si-sub">Each conference has its own countdown. Add one here for any other day.</div></div>') + _otherCds.map(cd=>`
     <div class="settings-item">
-      <div><div class="si-label">${cd.label}</div><div class="si-sub">${cd.date}</div></div>
+      <div><div class="si-label">${esc(cd.label)}</div><div class="si-sub">${cd.date}</div></div>
       <div class="si-actions">
         <button class="si-btn" onclick="openEditCountdown('${cd.id}')">Edit</button>
         <button class="si-btn del" onclick="removeCDFromSettings('${cd.id}')">✕</button>
@@ -3544,7 +3726,7 @@ function renderSettingsPage(){
   // Categories
   document.getElementById('cat-settings-list').innerHTML = cats.map((cat,i)=>`
     <div class="settings-item">
-      <div class="si-label"><span class="si-dot ${catClass(cat)}"></span>${esc(cat)}</div>
+      <div class="si-label"><button class="si-dot si-dot-btn ${catClass(cat)}" title="Change color" aria-label="Change the color of ${esc(cat)}" onclick="openCatColor(${i})"></button>${esc(cat)}</div>
       <div class="si-actions">
         <button class="si-btn" title="Move up" ${i===0?'disabled':''} onclick="moveCat(${i},-1)">↑</button>
         <button class="si-btn" title="Move down" ${i===cats.length-1?'disabled':''} onclick="moveCat(${i},1)">↓</button>
@@ -3560,7 +3742,7 @@ function removeCDFromSettings(id){
   save(); renderCountdowns(); renderSettingsPage();
 }
 function catsChanged(){
-  saveCats();
+  saveCats(); renderCatStyles();
   renderCatFilters(); renderSettingsPage(); renderMasterList();
 }
 function moveCat(i, dir){
@@ -3577,6 +3759,7 @@ function renameCat(i){
   cats[i] = name;
   // remember which built-in it was so it keeps its color (and the Author Intro date rule)
   const base = catKey(old);
+  if(base === old && catColors[old]){ catColors[name] = catColors[old]; delete catColors[old]; _storeCatColors(); }
   delete catAlias[old];
   if(base !== name) catAlias[name] = base;
   let n = 0;
@@ -3683,7 +3866,9 @@ document.querySelectorAll('.modal-ov').forEach(ov=>{
 
 // ── RENDER ALL ─────────────────────────────────────────────────────────────
 function renderAll(){
+  renderCatStyles();
   renderCountdowns();
+  renderConfChoices();
   renderCatFilters();
   renderMasterList();
 }

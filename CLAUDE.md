@@ -18,8 +18,13 @@ no Soiree HQ, no Author Info, its own Firebase project.
   the other four collections are open. Every post edit goes through `touch(p, fields)` so the rev is stamped.
 
 ## Conferences
-- Two conferences in `CONFS`: **feb** = Feb 27, 2027 and **sept** = Sept 18, 2027 (sept window starts Feb 28).
-- Every post has `p.conf` ('feb' | 'sept'). The post form asks "Which conference?" first, then the date type.
+- Built-in conferences in `BASE_CONFS`: **feb** = Feb 27, 2027 and **sept** = Sept 18, 2027. More are added in
+  **Settings → Conferences → + Add** (key `cYYYYMMDD`); edits/additions live in `_confExtra`, shared via `ss_meta/confs`
+  (`extra` + `confs[key].tix`). `rebuildConfs()` merges them into `CONFS`; each window starts the day after the
+  previous conference (`lo`). A conference's name defaults to the label of the countdown on its date.
+- One sheet (`cd-modal`) edits a conference (name, date, tickets on sale, color) and its countdown together;
+  "Other countdowns" lists only countdowns that aren't on a conference date.
+- Every post has `p.conf` (a key of `CONFS`). The post form asks "Which conference?" first, then the date type.
 - Date types: `fixed`, `premar1` = **Pre-tickets**, `postmar1` = **Post-tickets**, `flexible`.
   (Internal names are left over from the Soirée app; labels are what the user sees.)
 - Ticket sale date per conference is set in **Settings → Conferences** (shared via `ss_meta/confs`).
@@ -28,10 +33,14 @@ no Soiree HQ, no Author Info, its own Firebase project.
 - Scheduler (`computeProposal`) runs once per conference; Fixed posts never move.
 
 ## Look
-- Logo/colors from the Gathered in Christ logos: deep olive `#3C4A35`, sage, cream, terracotta, rose.
-- Category colors (date tab + pill): Speaker rose `#B8636E`, Registration rust `#A65A32`, Event deep olive `#3C4A35`,
-  Inspiration teal `#4F7C82`, Fun mustard `#C9A043`. Custom categories use sage.
-- Conference heading colors: Feb `#3C4A35`, Sept `#B0603A`.
+- Brand guide colors: olive `#6C7255` (banner bg is `#6C7355`), burgundy `#541B1E`, rose `#A04C54`, cream `#E2DEC9`,
+  terracotta `#A56F52`, light terracotta `#C08A61`. Headings use Domine (free stand-in for SuperClarendon).
+- Top bar: `header-banner.png` (cropped from the newsletter signup banner), centered on olive.
+- App icons (`icon-*.png`, `favicon.ico`): lamp emblem on olive.
+- Default category colors: Speaker rose, Registration terracotta, Event olive, Inspiration dark sage `#868B6F`,
+  Fun light terracotta; emails burgundy. Nicole can change any category's color in Settings → Categories (tap the dot):
+  brand swatches plus her own custom colors, stored as `colors`/`custom` in `ss_meta/cats`; `renderCatStyles()` applies them.
+- Conference colors are set per conference in its sheet (`renderConfStyles()`).
 
 ## Speaker posts
 3 speakers + 1 musical guest. Nicole renames the slots herself as speakers are confirmed.

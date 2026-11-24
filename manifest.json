@@ -5,8 +5,7 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#F4F2E8",
+  "background_color": "#6C7355",
   "theme_color": "#6C7355",
   "categories": ["productivity", "lifestyle"],
   "icons": [
