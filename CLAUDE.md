@@ -21,7 +21,8 @@ no Soiree HQ, no Author Info, its own Firebase project.
 - Built-in conferences in `BASE_CONFS`: **feb** = Feb 27, 2027 and **sept** = Sept 18, 2027. More are added in
   **Settings → Conferences → + Add** (key `cYYYYMMDD`); edits/additions live in `_confExtra`, shared via `ss_meta/confs`
   (`extra` + `confs[key].tix`). `rebuildConfs()` merges them into `CONFS`; each window starts the day after the
-  previous conference (`lo`). A conference's name defaults to the label of the countdown on its date.
+  previous conference (`lo`). The 2027 ones are named "Feb Conference" / "Sept Conference" (set once by
+  `ensureConfNames()`; a saved name wins after that). No season emoji icons anywhere (Nicole asked to remove them).
 - One sheet (`cd-modal`) edits a conference (name, date, tickets on sale, color) and its countdown together;
   "Other countdowns" lists only countdowns that aren't on a conference date.
 - Every post has `p.conf` (a key of `CONFS`). The post form asks "Which conference?" first, then the date type.

@@ -780,12 +780,12 @@ document.head.appendChild(_fbScript1);
 // A conference's window starts the day after the conference before it (lo), and ends on its date.
 const CONF_COLORS = ['#A04C54','#6F8A9A','#6E4A63','#541B1E','#C9A043'];   // rose, dusty blue, plum, burgundy, mustard
 const BASE_CONFS = {
-  feb:  {name:'Feb 27',  long:'Feb 27 conference',  icon:'🌸', date:'2027-02-27', color:'#6C7255', tix:''},
-  sept: {name:'Sept 18', long:'Sept 18 conference', icon:'🍂', date:'2027-09-18', color:'#A56F52', tix:''},
+  feb:  {name:'Feb Conference',  long:'Feb Conference',  icon:'', date:'2027-02-27', color:'#6C7255', tix:''},
+  sept: {name:'Sept Conference', long:'Sept Conference', icon:'', date:'2027-09-18', color:'#A56F52', tix:''},
 };
 const CONFS = JSON.parse(JSON.stringify(BASE_CONFS));
 let _confExtra = {};   // added conferences: key -> {name, date, icon, color}
-function _confIcon(ds){ const m = +ds.slice(5,7); return m<=5 ? '🌸' : m<=8 ? '☀️' : m<=11 ? '🍂' : '❄️'; }
+function _confIcon(ds){ return ''; }   // no season icons
 function _confDefaultName(ds){ const d = new Date(ds+'T12:00:00'); return ['Jan','Feb','Mar','Apr','May','June','July','Aug','Sept','Oct','Nov','Dec'][d.getMonth()]+' '+d.getDate()+', '+d.getFullYear(); }
 // rebuild CONFS from the built-in two plus the added ones, and work out each window's start
 function rebuildConfs(){
@@ -793,7 +793,7 @@ function rebuildConfs(){
   const cdName = ds=>{ try{ const cd = (countdowns||[]).find(x=>x.date===ds); return cd ? String(cd.label).replace(/^the\s+/i,'') : ''; }catch(e){ return ''; } };
   const mk = (base, x, added)=>{ const date = (x && x.date) || base.date;
     const name = (x && x.name) || cdName(date) || base.name || _confDefaultName(date);
-    return {name, long: name + (/conference/i.test(name) ? '' : ' conference'), icon: (x && x.icon) || base.icon || _confIcon(date), date,
+    return {name, long: name + (/conference/i.test(name) ? '' : ' conference'), icon: '', date,
             color: (x && x.color) || base.color || CONF_COLORS[0], tix:'', added}; };
   Object.keys(BASE_CONFS).forEach(c=>{ CONFS[c] = mk(BASE_CONFS[c], _confExtra[c], false); });
   Object.keys(_confExtra).forEach(c=>{ const x = _confExtra[c]; if(BASE_CONFS[c] || !x || !x.date) return; CONFS[c] = mk({}, x, true); });
@@ -859,10 +859,10 @@ function removeConference(c){
 function renderConfChoices(){
   const order = confOrder();
   const f = document.getElementById('conf-filter-chips');
-  if(f) f.innerHTML = order.map(c=>`<button class="chip c-conf conf-chip-${c}${activeConfFilters.has(c)?' active':''}" onclick="toggleFilter('conf','${c}',this)">${CONFS[c].icon} ${esc(CONFS[c].name)}</button>`).join('');
+  if(f) f.innerHTML = order.map(c=>`<button class="chip c-conf conf-chip-${c}${activeConfFilters.has(c)?' active':''}" onclick="toggleFilter('conf','${c}',this)">${esc(CONFS[c].name)}</button>`).join('');
   const pills = document.getElementById('pm-conf-pills');
   if(pills){ const cur = selectedConf();
-    pills.innerHTML = order.map(c=>`<button class="date-pill conf-pill${c===cur?' active':''}" id="cp-${c}" data-conf="${c}" onclick="selectConf('${c}')">${CONFS[c].icon} ${esc(CONFS[c].name)}</button>`).join(''); }
+    pills.innerHTML = order.map(c=>`<button class="date-pill conf-pill${c===cur?' active':''}" id="cp-${c}" data-conf="${c}" onclick="selectConf('${c}')">${esc(CONFS[c].name)}</button>`).join(''); }
 }
 // which conference a date falls in (the first one on or after it)
 function confForDate(ds){
@@ -1399,8 +1399,8 @@ document.addEventListener('visibilitychange', ()=>{
   syncAuthorIntros();
 });
 const DC = [
-  {id:"cd1",label:"the Feb Conference",date:"2027-02-27",color:"#A56F52"},
-  {id:"cd2",label:"the Sept Conference",date:"2027-09-18",color:"#6C7255"},
+  {id:"cd1",label:"Feb Conference",date:"2027-02-27",color:"#A56F52"},
+  {id:"cd2",label:"Sept Conference",date:"2027-09-18",color:"#6C7255"},
 ];
 const DCATS = ["Speaker","Registration","Event","Inspiration","Fun"];
 const DHTAGS = [
@@ -1917,7 +1917,7 @@ function startPresence(){
 // ── ALWAYS THE NEWEST VERSION ──────────────────────────────────────────────
 // When the app comes back on screen, it checks for a newer version and reloads into it
 // (unless you're in the middle of editing or arranging). Your waiting changes are kept.
-const APP_VERSION = 'gathered-social-v13';
+const APP_VERSION = 'gathered-social-v14';
 (()=>{ const l = document.getElementById('app-version-lbl'); if(l) l.textContent = APP_VERSION.replace('gathered-social-v',''); })();
 async function checkForNewVersion(){
   try{
@@ -2196,7 +2196,7 @@ function byConfHTML(list, card){
   }
   return order.map(c=>{
     const group = list.filter(p=>confOf(p)===c); if(!group.length) return '';
-    return `<div class="section-divider conf-divider conf-div-${c}"><div class="sd-line"></div><div class="sd-lbl">${CONFS[c].icon} ${CONFS[c].long}</div><div class="sd-line"></div></div>` + group.map(card).join('');
+    return `<div class="section-divider conf-divider conf-div-${c}"><div class="sd-line"></div><div class="sd-lbl">${esc(CONFS[c].long)}</div><div class="sd-line"></div></div>` + group.map(card).join('');
   }).join('');
 }
 function renderMasterList(){
@@ -2487,7 +2487,6 @@ function calDayTap(ds){
 // ── ARRANGE / DRAG ─────────────────────────────────────────────────────────
 // While you drag posts yourself, each post is one slim row (date + name + handle),
 // the same look as the schedule preview, so it's quick to move up and down the list.
-// 🌸 = Feb (spring) conference, 🍂 = Sept (fall) conference, shown at the top of the date tab.
 function confIcon(p, ds){ return ''; }   // the conference headings in the list show which conference
 function compactRowHTML(p){
   const fixed = p.dateType==='fixed' && !!p.date;
@@ -2553,7 +2552,7 @@ function setArrangeConf(c){ arrangeConf = c; _anchorsPlaced = false; _arrangeOrd
 function arrangeConfPills(){
   const t = today.toISOString().slice(0,10);
   return `<div class="arrange-confs"><span class="fg-lbl">Conference</span>` + confOrder().filter(c=>CONFS[c].date >= t).map(c=>
-    `<button class="chip c-conf conf-chip-${c}${c===arrangeConf?' active':''}" onclick="setArrangeConf('${c}')">${CONFS[c].icon} ${esc(CONFS[c].name)}</button>`).join('') + `</div>`;
+    `<button class="chip c-conf conf-chip-${c}${c===arrangeConf?' active':''}" onclick="setArrangeConf('${c}')">${esc(CONFS[c].name)}</button>`).join('') + `</div>`;
 }
 function arrangeCandidates(){
   return getFiltered().filter(p=>p.type==='social' && p.dateType!=='fixed' && confOf(p)===arrangeConf && !(p.date && new Date(p.date+'T12:00:00') < today) && !isPostEvent(p, p.date));
@@ -3498,7 +3497,7 @@ function openDetail(id){
   const isEmail = p.type==='email';
   const isOther = p.type==='other';
   const catLabel = isEmail ? 'Email' : isOther ? 'Other' : (p.cat||'');
-  const typeLbl = CONFS[confOf(p)].icon + ' ' + CONFS[confOf(p)].long + ' · ' + ({flexible:'Flexible', premar1:'Pre-tickets', postmar1:'Post-tickets', fixed:'Fixed date'}[p.dateType] || '');
+  const typeLbl = CONFS[confOf(p)].long + ' · ' + ({flexible:'Flexible', premar1:'Pre-tickets', postmar1:'Post-tickets', fixed:'Fixed date'}[p.dateType] || '');
   const dateLbl = p.date ? `${fmtDate(p.date)} · ${typeLbl}` : `Unscheduled · ${typeLbl}`;
 
   let h = `
@@ -3734,7 +3733,7 @@ function renderSettingsPage(){
   // Conferences: ticket sale date for each (shared with everyone)
   document.getElementById('conf-settings-list').innerHTML = confOrder().map(c=>{ const C = CONFS[c]; return `
     <div class="settings-item conf-set conf-set-${c}">
-      <div><div class="si-label">${C.icon} ${esc(C.long)}</div><div class="si-sub">${_fmtShort(C.date)}, ${C.date.slice(0,4)}</div><div class="si-sub">🎟️ Tickets go on sale: ${C.tix ? '<b>'+_fmtShort(C.tix) + ', ' + C.tix.slice(0,4)+'</b>' : 'not set yet'}</div></div>
+      <div><div class="si-label">${esc(C.long)}</div><div class="si-sub">${_fmtShort(C.date)}, ${C.date.slice(0,4)}</div><div class="si-sub">🎟️ Tickets go on sale: ${C.tix ? '<b>'+_fmtShort(C.tix) + ', ' + C.tix.slice(0,4)+'</b>' : 'not set yet'}</div></div>
       <div class="si-actions">
         <button class="si-btn" onclick="openConfSheet('${c}')">Edit</button>
       </div>
@@ -3891,7 +3890,21 @@ document.querySelectorAll('.modal-ov').forEach(ov=>{
 });
 
 // ── RENDER ALL ─────────────────────────────────────────────────────────────
+// Nicole asked for the 2027 conferences to be called "Feb Conference" and "Sept Conference".
+// Done once: after that the saved name wins, so she can rename them in Settings.
+function ensureConfNames(){
+  if(typeof countdowns==='undefined' || !countdowns) return;
+  let changed = false;
+  [['feb','Feb Conference'],['sept','Sept Conference']].forEach(([c,name])=>{
+    if(_confExtra[c] && _confExtra[c].name) return;
+    _confExtra[c] = {...(_confExtra[c]||{}), name};
+    const cd = countdowns.find(x=>x.date===BASE_CONFS[c].date); if(cd && cd.label!==name){ cd.label = name; }
+    changed = true;
+  });
+  if(changed){ rebuildConfs(); _storeConfs(); _shareConfs(); save(); }
+}
 function renderAll(){
+  ensureConfNames();
   renderCatStyles();
   renderCountdowns();
   renderConfChoices();
