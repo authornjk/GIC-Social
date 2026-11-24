@@ -704,12 +704,12 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getFirestore, collection, doc, setDoc, getDocs, onSnapshot, deleteDoc, writeBatch, runTransaction }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 const firebaseConfig = {
-  apiKey: "PASTE_API_KEY",
-  authDomain: "PASTE.firebaseapp.com",
-  projectId: "PASTE_PROJECT_ID",
-  storageBucket: "PASTE.firebasestorage.app",
-  messagingSenderId: "PASTE",
-  appId: "PASTE_APP_ID"
+  apiKey: "AIzaSyA5YEZx4I-851967Cule3N9ve2uYga3NSI",
+  authDomain: "gic-social.firebaseapp.com",
+  projectId: "gic-social",
+  storageBucket: "gic-social.firebasestorage.app",
+  messagingSenderId: "877180982425",
+  appId: "1:877180982425:web:71211422db405af633d408"
 };
 if(firebaseConfig.apiKey.startsWith('PASTE')){ window._fbNotSetUp = true; throw new Error('Firebase not set up yet: working on this device only'); }
 const _fbApp = initializeApp(firebaseConfig);
@@ -1713,7 +1713,7 @@ function startPresence(){
 // ── ALWAYS THE NEWEST VERSION ──────────────────────────────────────────────
 // When the app comes back on screen, it checks for a newer version and reloads into it
 // (unless you're in the middle of editing or arranging). Your waiting changes are kept.
-const APP_VERSION = 'gathered-social-v1';
+const APP_VERSION = 'gathered-social-v2';
 (()=>{ const l = document.getElementById('app-version-lbl'); if(l) l.textContent = APP_VERSION.replace('gathered-social-v',''); })();
 async function checkForNewVersion(){
   try{
