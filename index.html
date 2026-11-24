@@ -27,10 +27,10 @@
   --fd:'Libre Caslon Text',serif;--fb:'Montserrat',sans-serif;
   /* Category colors */
   --cat-author:#B8636E;   /* rose — Speaker */
-  --cat-general:#6B7152;  /* olive — Inspiration */
-  --cat-tickets:#A9704F;  /* terracotta — Registration */
+  --cat-general:#4F7C82;  /* teal — Inspiration */
+  --cat-tickets:#A65A32;  /* rust — Registration */
   --cat-event:#3C4A35;    /* deep olive — Event */
-  --cat-fun:#C68B63;      /* clay — Fun */
+  --cat-fun:#C9A043;      /* mustard — Fun */
   --cat-other:#A7AC96;    /* sage — other/custom */
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -168,10 +168,6 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
 .conf-div-sept .sd-lbl{color:var(--conf-sept);font-weight:600}
 /* First-glance conference color on the date tab: Feb = deep olive, Sept = rust */
 :root{--conf-feb:#3C4A35;--conf-sept:#B0603A}
-.card.conf-feb .card-stripe{background:var(--conf-feb);color:#fff}
-.card.conf-sept .card-stripe{background:var(--conf-sept);color:#fff}
-.card.compact-row.conf-feb .card-stripe{background:var(--cream)!important;box-shadow:inset 6px 0 0 var(--conf-feb)}
-.card.compact-row.conf-sept .card-stripe{background:var(--cream)!important;box-shadow:inset 6px 0 0 var(--conf-sept)}
 .chip.conf-chip-feb.active{background:var(--conf-feb);border-color:var(--conf-feb);color:#fff}
 .chip.conf-chip-sept.active{background:var(--conf-sept);border-color:var(--conf-sept);color:#fff}
 #cp-feb.active{background:var(--conf-feb);border-color:var(--conf-feb);color:#fff}
@@ -1827,7 +1823,7 @@ function startPresence(){
 // ── ALWAYS THE NEWEST VERSION ──────────────────────────────────────────────
 // When the app comes back on screen, it checks for a newer version and reloads into it
 // (unless you're in the middle of editing or arranging). Your waiting changes are kept.
-const APP_VERSION = 'gathered-social-v6';
+const APP_VERSION = 'gathered-social-v7';
 (()=>{ const l = document.getElementById('app-version-lbl'); if(l) l.textContent = APP_VERSION.replace('gathered-social-v',''); })();
 async function checkForNewVersion(){
   try{
@@ -1849,7 +1845,7 @@ window.addEventListener('online', ()=>{ if(window._firestoreDB && (_pending.size
 // Built-in categories keep their color and rules when renamed. catAlias maps a
 // current name to the built-in it came from, e.g. {"Meet the Authors":"Speaker"}.
 const BASE_CAT_CLASS = {'Speaker':'cat-author','Inspiration':'cat-general','Registration':'cat-tickets','Event':'cat-event','Fun':'cat-fun'};
-const BASE_CAT_COLOR = {'Speaker':'#B8636E','Inspiration':'#6B7152','Registration':'#A9704F','Event':'#3C4A35','Fun':'#C68B63'};
+const BASE_CAT_COLOR = {'Speaker':'#B8636E','Inspiration':'#4F7C82','Registration':'#A65A32','Event':'#3C4A35','Fun':'#C9A043'};
 let catAlias = (()=>{ try{ return JSON.parse(localStorage.getItem('ss_catalias')||'{}'); }catch(e){ return {}; } })();
 function catKey(cat){ return catAlias[cat] || cat; }                       // current name -> built-in name
 function catName(base){ return Object.keys(catAlias).find(k=>catAlias[k]===base) || base; } // built-in -> current name
@@ -2343,10 +2339,7 @@ function calDayTap(ds){
 // While you drag posts yourself, each post is one slim row (date + name + handle),
 // the same look as the schedule preview, so it's quick to move up and down the list.
 // 🌸 = Feb (spring) conference, 🍂 = Sept (fall) conference, shown at the top of the date tab.
-function confIcon(p, ds){
-  const C = CONFS[confOf(p)];
-  return '<span class="tab-conf" title="'+C.long+'">'+C.icon+'</span>';
-}
+function confIcon(p, ds){ return ''; }   // the conference headings in the list show which conference
 function compactRowHTML(p){
   const fixed = p.dateType==='fixed' && !!p.date;
   const d = p.date ? new Date(p.date+'T12:00:00') : null;
