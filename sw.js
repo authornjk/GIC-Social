@@ -1,6 +1,6 @@
 // ── SOIREE SOCIAL SERVICE WORKER ─────────────────────────────────────────
 // Version bump this string any time you update the app — it forces a cache refresh
-const CACHE_NAME = 'gathered-social-v11';
+const CACHE_NAME = 'gathered-social-v12';
 
 // Files to cache for offline use
 const PRECACHE_URLS = [

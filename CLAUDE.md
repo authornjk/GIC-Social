@@ -31,6 +31,8 @@ no Soiree HQ, no Author Info, its own Firebase project.
   Until it's set, Pre/Post-tickets don't split the window.
 - Lists are grouped under a heading per conference, the **next upcoming conference first** (`confOrder()`).
 - Scheduler (`computeProposal`) runs once per conference; Fixed posts never move.
+- **Arrange** works on one conference at a time (`arrangeConf`, picked with chips at the top of the arrange bar;
+  defaults to the single conference filter, else the next upcoming conference).
 
 ## Look
 - Brand guide colors: olive `#6C7255` (banner bg is `#6C7355`), burgundy `#541B1E`, rose `#A04C54`, cream `#E2DEC9`,

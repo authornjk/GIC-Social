@@ -215,6 +215,7 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
 .arrange-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .arrange-row .arrange-q{margin:0 auto 0 2px}
 .arrange-done{border:none;border-radius:16px;padding:8px 14px;background:var(--navy);color:var(--white);font-family:var(--fb);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+.arrange-confs{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 2px 10px}
 .arrange-note{font-size:10px;color:#888;line-height:1.35;margin:8px 2px 0}
 .arrange-note button{background:none;border:none;padding:0;color:var(--navy);text-decoration:underline;font:inherit;cursor:pointer}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--navy);color:var(--white);font-family:var(--fb);font-size:12px;padding:10px 14px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.2);z-index:400;display:flex;gap:12px;align-items:center;max-width:calc(100% - 32px)}
@@ -1912,7 +1913,7 @@ function startPresence(){
 // ── ALWAYS THE NEWEST VERSION ──────────────────────────────────────────────
 // When the app comes back on screen, it checks for a newer version and reloads into it
 // (unless you're in the middle of editing or arranging). Your waiting changes are kept.
-const APP_VERSION = 'gathered-social-v11';
+const APP_VERSION = 'gathered-social-v12';
 (()=>{ const l = document.getElementById('app-version-lbl'); if(l) l.textContent = APP_VERSION.replace('gathered-social-v',''); })();
 async function checkForNewVersion(){
   try{
@@ -2500,7 +2501,7 @@ function compactRowHTML(p){
 // Upcoming Fixed posts, shown in the Arrange list as markers to arrange around
 function fixedAnchors(){
   const t = today.toISOString().slice(0,10);
-  return getFiltered().filter(p=>p.type==='social' && p.dateType==='fixed' && p.date && p.date >= t)
+  return getFiltered().filter(p=>p.type==='social' && p.dateType==='fixed' && p.date && p.date >= t && (!arrangeMode || confOf(p)===arrangeConf))
                       .sort((a,b)=>a.date.localeCompare(b.date));
 }
 // Put each Fixed card where it falls in time, based on the dates the other posts would get
@@ -2536,8 +2537,21 @@ function placeAnchors(){
   const box = cards[0].parentNode;
   cards.map((c,i)=>({c, k:keyOf(c), i})).sort((a,b)=> a.k.localeCompare(b.k) || a.i-b.i).forEach(x=>box.appendChild(x.c));
 }
+// Arrange works on one conference at a time (arrangeConf).
+let arrangeConf = null;
+function _defaultArrangeConf(){
+  if(activeConfFilters.size===1) return [...activeConfFilters][0];
+  const t = today.toISOString().slice(0,10);
+  return confOrder().find(c=>CONFS[c].date >= t) || confOrder()[0];
+}
+function setArrangeConf(c){ arrangeConf = c; _anchorsPlaced = false; _arrangeOrder = null; syncArrangeUI(); renderMasterList(); }
+function arrangeConfPills(){
+  const t = today.toISOString().slice(0,10);
+  return `<div class="arrange-confs"><span class="fg-lbl">Conference</span>` + confOrder().filter(c=>CONFS[c].date >= t).map(c=>
+    `<button class="chip c-conf conf-chip-${c}${c===arrangeConf?' active':''}" onclick="setArrangeConf('${c}')">${CONFS[c].icon} ${esc(CONFS[c].name)}</button>`).join('') + `</div>`;
+}
 function arrangeCandidates(){
-  return getFiltered().filter(p=>p.type==='social' && p.dateType!=='fixed' && !(p.date && new Date(p.date+'T12:00:00') < today));
+  return getFiltered().filter(p=>p.type==='social' && p.dateType!=='fixed' && confOf(p)===arrangeConf && !(p.date && new Date(p.date+'T12:00:00') < today));
 }
 // Arrange has two steps: first you pick how ('choose'), then for your own order you drag ('manual').
 let arrangeStage = 'choose';
@@ -2546,7 +2560,7 @@ let _anchorsPlaced = false, _arrangeOrder = null;
 function rememberArrangeOrder(){ _arrangeOrder = _listCards().map(c=>c.dataset.id); }
 function toggleArrange(){
   if(arrangeMode){ exitArrangeMode(); renderMasterList(); return; }
-  arrangeMode = true; arrangeStage = 'choose'; _anchorsPlaced = false; _arrangeOrder = null;
+  arrangeMode = true; arrangeStage = 'choose'; _anchorsPlaced = false; _arrangeOrder = null; arrangeConf = _defaultArrangeConf();
   setActivity('arranging');
   const other = othersOn().find(o=>o.doing==='arranging');
   if(other) showToast(`${other.user===getCurrentUser() ? 'You (on your '+other.device+')' : other.user} ${other.user===getCurrentUser()?'are':'is'} arranging right now. If you both arrange, whoever taps done last wins.`);
@@ -2568,8 +2582,8 @@ function renderArrangeBar(){
   const bar = document.getElementById('arrange-bar');
   if(!arrangeMode){ bar.innerHTML = ''; return; }
   if(arrangeStage === 'choose'){
-    bar.innerHTML = `
-      <div class="arrange-q">How do you want to schedule these?</div>
+    bar.innerHTML = arrangeConfPills() + `
+      <div class="arrange-q">How do you want to schedule the ${esc(CONFS[arrangeConf].long)} posts?</div>
       <div class="arrange-choices">
         <button class="arrange-choice" onclick="setArrangeStage('manual')">
           <b>✋ I'll arrange the posts in the order I want, then you space them out</b>
@@ -2580,11 +2594,11 @@ function renderArrangeBar(){
           <span>You'll see the calendar first, before anything is scheduled.</span>
         </button>
       </div>
-      <div class="arrange-note">Posts that have a FIXED date never move. Speaker posts and Feb conf posts land by Feb 27; Sept conf posts land after Feb 27, by Sept 18.</div>`;
+      <div class="arrange-note">Only the ${esc(CONFS[arrangeConf].long)} posts are arranged; other conferences aren't touched. Posts with a FIXED date never move. Posts land ${CONFS[arrangeConf].lo ? 'between '+_fmtShort(CONFS[arrangeConf].lo)+' and ' : 'by '}${_fmtShort(CONFS[arrangeConf].date)}.</div>`;
   } else {
     bar.innerHTML = `
       <div class="arrange-row">
-        <div class="arrange-q">Drag the posts into the order you want.</div>
+        <div class="arrange-q">Drag the ${esc(CONFS[arrangeConf].name)} posts into the order you want.</div>
         <button class="arrange-done" onclick="doneArranging()">✓ I'm done arranging them</button>
       </div>
       <div class="arrange-note">When you tap done, I'll space them out and schedule them in this order, starting today.
@@ -2868,7 +2882,7 @@ function runAutoSchedule(){
 }
 function computeProposal(orderedIds, startStr){
   const used = new Set(posts.filter(p=>p.dateType==='fixed' && p.date).map(p=>p.date));
-  const out = posts.filter(p=>p.type==='social' && p.dateType==='fixed' && p.date && p.date >= startStr)
+  const out = posts.filter(p=>p.type==='social' && p.dateType==='fixed' && p.date && p.date >= startStr && (!arrangeMode || confOf(p)===arrangeConf))
     .map(p=>({id:p.id, date:p.date||'', title:p.title, dateType:p.dateType, kept:true}));
   Object.keys(CONFS).forEach(c=>{
     const ids = orderedIds.filter(id=>{ const p = posts.find(x=>x.id===id); return p && p.dateType!=='fixed' && confOf(p)===c; });
