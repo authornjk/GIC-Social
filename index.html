@@ -350,6 +350,9 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
 .settings-item:last-child{border-bottom:none}
 .si-label{font-size:13px}
 .si-sub{font-size:10px;color:#aaa;margin-top:1px}
+.tix-input{font-family:var(--fb);font-size:16px;padding:6px 8px;border:1px solid var(--cream-d);border-radius:8px;background:var(--cream);color:var(--black);max-width:150px}
+.conf-set-feb .si-label{color:var(--conf-feb);font-weight:600}
+.conf-set-sept .si-label{color:var(--conf-sept);font-weight:600}
 .si-actions{display:flex;gap:6px;align-items:center;flex-shrink:0}
 .si-btn{border:none;background:var(--cream);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;font-family:var(--fb);white-space:nowrap}
 .si-btn.del{color:var(--coral-d)}
@@ -471,6 +474,10 @@ mark.hit{background:#F6E2A6;color:inherit;border-radius:2px;padding:0 1px}
 
   <!-- Settings page -->
   <div class="page" id="page-settings">
+    <div class="settings-section">
+      <div class="settings-hdr"><div class="settings-title">Conferences</div></div>
+      <div id="conf-settings-list"></div>
+    </div>
     <div class="settings-section">
       <div class="settings-hdr"><div class="settings-title">Countdowns</div><button class="settings-add" onclick="openAddCountdown()">+ Add</button></div>
       <div id="cd-settings-list"></div>
@@ -759,6 +766,25 @@ const CONFS = {
   feb:  {name:'Feb',  long:'Feb 27 conference',  icon:'🌸', date:'2027-02-27', lo:'',           tix:''},
   sept: {name:'Sept', long:'Sept 18 conference', icon:'🍂', date:'2027-09-18', lo:'2027-02-28', tix:''},
 };
+// Ticket sale dates are kept on this device and shared through the cloud (ss_meta/confs).
+try{ const saved = JSON.parse(localStorage.getItem('gs_confs')||'{}'); Object.keys(saved).forEach(c=>{ if(CONFS[c] && typeof saved[c].tix==='string') CONFS[c].tix = saved[c].tix; }); }catch(e){}
+function confSettings(){ const o = {}; Object.keys(CONFS).forEach(c=>{ o[c] = {tix: CONFS[c].tix}; }); return o; }
+function adoptConfSettings(d){
+  if(!d || !d.confs) return false;
+  let changed = false;
+  Object.keys(d.confs).forEach(c=>{ const t = d.confs[c] && d.confs[c].tix; if(CONFS[c] && typeof t==='string' && t!==CONFS[c].tix){ CONFS[c].tix = t; changed = true; } });
+  if(changed) try{ localStorage.setItem('gs_confs', JSON.stringify(confSettings())); }catch(e){}
+  return changed;
+}
+function setTicketDate(c, ds){
+  const C = CONFS[c]; if(!C) return;
+  if(ds && (ds > C.date || (C.lo && ds < C.lo))){ alert('Tickets for the '+C.long+' need to go on sale '+(C.lo?'between '+_fmtShort(C.lo)+' and ':'on or before ')+_fmtShort(C.date)+'.'); renderSettingsPage(); return; }
+  C.tix = ds || '';
+  try{ localStorage.setItem('gs_confs', JSON.stringify(confSettings())); }catch(e){}
+  if(window._firestoreDB) window._fbSetDoc(window._fbDoc(window._firestoreDB,'ss_meta','confs'), {id:'confs', confs:confSettings(), at:Date.now(), by:(typeof currentUser!=='undefined' && currentUser)||''}).catch(()=>{});
+  renderSettingsPage(); renderMasterList();
+  showToast(C.long + (ds ? ': tickets go on sale ' + _fmtShort(ds) : ': ticket date cleared'));
+}
 function confOf(p){
   if(p && CONFS[p.conf]) return p.conf;
   if(p && p.dateType==='postmar1') return 'sept';
@@ -1446,6 +1472,7 @@ async function loadFromFirestoreAll(){
     ]);
     let changed = false;
     adoptTombs((fsMeta||[]).find(d=>d.id==='deleted'));
+    adoptConfSettings((fsMeta||[]).find(d=>d.id==='confs'));
     const metaCats = (fsMeta||[]).find(d=>d.id==='cats');
     if(adoptCats(metaCats)) changed = true;
     if(metaCats) window._syncedCats = stableJSON({list:metaCats.list, alias:metaCats.alias||{}});
@@ -1501,6 +1528,7 @@ function setupFirestoreListeners(){
   window._fbOnSnapshot(window._fbCollection(window._firestoreDB,'ss_meta'), snap=>{
     const docs = snap.docs.map(x=>x.data());
     if(adoptTombs(docs.find(x=>x.id==='deleted')) && dropGone()){ localStorage.setItem('ss_p2', JSON.stringify(posts)); renderAll(); }
+    if(adoptConfSettings(docs.find(x=>x.id==='confs'))){ renderSettingsPage(); renderMasterList(); }
     const d = docs.find(x=>x.id==='cats');
     if(adoptCats(d)){ renderCatFilters(); renderSettingsPage(); renderMasterList(); }
   });
@@ -1799,7 +1827,7 @@ function startPresence(){
 // ── ALWAYS THE NEWEST VERSION ──────────────────────────────────────────────
 // When the app comes back on screen, it checks for a newer version and reloads into it
 // (unless you're in the middle of editing or arranging). Your waiting changes are kept.
-const APP_VERSION = 'gathered-social-v5';
+const APP_VERSION = 'gathered-social-v6';
 (()=>{ const l = document.getElementById('app-version-lbl'); if(l) l.textContent = APP_VERSION.replace('gathered-social-v',''); })();
 async function checkForNewVersion(){
   try{
@@ -3500,6 +3528,15 @@ function deleteHtagGroup(id){
 
 // ── SETTINGS PAGE ──────────────────────────────────────────────────────────
 function renderSettingsPage(){
+  // Conferences: ticket sale date for each (shared with everyone)
+  document.getElementById('conf-settings-list').innerHTML = confOrder().map(c=>{ const C = CONFS[c]; return `
+    <div class="settings-item conf-set conf-set-${c}">
+      <div><div class="si-label">${C.icon} ${C.long}</div><div class="si-sub">Tickets go on sale: ${C.tix ? _fmtShort(C.tix) + ', ' + C.tix.slice(0,4) : 'not set yet'}</div></div>
+      <div class="si-actions">
+        <input type="date" class="tix-input" id="tix-${c}" value="${C.tix||''}" max="${C.date}" ${C.lo?`min="${C.lo}"`:''} onchange="setTicketDate('${c}', this.value)" aria-label="${C.long} ticket sale date">
+        ${C.tix ? `<button class="si-btn del" onclick="setTicketDate('${c}','')" aria-label="Clear ticket date">✕</button>` : ''}
+      </div>
+    </div>`; }).join('');
   // Countdowns
   document.getElementById('cd-settings-list').innerHTML = countdowns.map(cd=>`
     <div class="settings-item">
