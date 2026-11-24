@@ -30,10 +30,10 @@
   --fd:'Domine',Georgia,serif;--fb:'Montserrat',sans-serif;
   /* Category colors (all from the brand guide) */
   --cat-author:#A04C54;   /* rose — Speaker */
-  --cat-general:#868B6F;  /* dark sage — Inspiration */
+  --cat-general:#6F8A9A;  /* dusty blue — Inspiration */
   --cat-tickets:#A56F52;  /* terracotta — Registration */
   --cat-event:#6C7255;    /* olive — Event */
-  --cat-fun:#C08A61;      /* light terracotta — Fun */
+  --cat-fun:#C9A043;      /* mustard — Fun */
   --cat-other:#A7AB96;    /* sage — other/custom */
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -58,7 +58,7 @@ body{font-family:var(--fb);background:var(--cream);color:var(--black);min-height
 .cd-badge span.cd-num{font-family:var(--fb);font-size:13px;font-weight:600;font-variant-numeric:lining-nums tabular-nums;color:#fff;margin-right:3px}
 /* narrow phones: countdown line drops under the logo row */
 .cd-row{order:3;flex-basis:100%;padding-top:2px;overflow-x:auto;scrollbar-width:none;justify-content:safe center}
-@media (max-width:640px){.cd-row{flex-wrap:wrap;row-gap:2px;white-space:normal}.cd-badge,.cd-sep{font-size:11px}.cd-badge span.cd-num{font-size:12px}.hdr-right .presence{display:none!important}}
+@media (max-width:640px){.cd-row{flex-wrap:wrap;row-gap:2px;column-gap:14px;white-space:normal}.cd-sep{display:none}.cd-badge,.cd-sep{font-size:11px}.cd-badge span.cd-num{font-size:12px}.hdr-right .presence{display:none!important}}
 
 /* ── FILTER CHIPS ── */
 .filter-bar{background:var(--white);border-bottom:1px solid var(--cream-d);padding:7px 0 5px}
@@ -777,7 +777,7 @@ document.head.appendChild(_fbScript1);
 // tix = the day tickets go on sale; leave '' until it's known (then Pre/Post-tickets don't split).
 // Feb and Sept 2027 are built in; more are added in Settings → Conferences (shared via ss_meta/confs).
 // A conference's window starts the day after the conference before it (lo), and ends on its date.
-const CONF_COLORS = ['#A04C54','#541B1E','#C08A61','#868B6F'];   // rose, burgundy, light terracotta, dark sage
+const CONF_COLORS = ['#A04C54','#6F8A9A','#6E4A63','#541B1E','#C9A043'];   // rose, dusty blue, plum, burgundy, mustard
 const BASE_CONFS = {
   feb:  {name:'Feb 27',  long:'Feb 27 conference',  icon:'🌸', date:'2027-02-27', color:'#6C7255', tix:''},
   sept: {name:'Sept 18', long:'Sept 18 conference', icon:'🍂', date:'2027-09-18', color:'#A56F52', tix:''},
@@ -1912,7 +1912,7 @@ function startPresence(){
 // ── ALWAYS THE NEWEST VERSION ──────────────────────────────────────────────
 // When the app comes back on screen, it checks for a newer version and reloads into it
 // (unless you're in the middle of editing or arranging). Your waiting changes are kept.
-const APP_VERSION = 'gathered-social-v10';
+const APP_VERSION = 'gathered-social-v11';
 (()=>{ const l = document.getElementById('app-version-lbl'); if(l) l.textContent = APP_VERSION.replace('gathered-social-v',''); })();
 async function checkForNewVersion(){
   try{
@@ -1934,7 +1934,7 @@ window.addEventListener('online', ()=>{ if(window._firestoreDB && (_pending.size
 // Built-in categories keep their color and rules when renamed. catAlias maps a
 // current name to the built-in it came from, e.g. {"Meet the Authors":"Speaker"}.
 const BASE_CAT_CLASS = {'Speaker':'cat-author','Inspiration':'cat-general','Registration':'cat-tickets','Event':'cat-event','Fun':'cat-fun'};
-const BASE_CAT_COLOR = {'Speaker':'#A04C54','Inspiration':'#868B6F','Registration':'#A56F52','Event':'#6C7255','Fun':'#C08A61'};
+const BASE_CAT_COLOR = {'Speaker':'#A04C54','Inspiration':'#6F8A9A','Registration':'#A56F52','Event':'#6C7255','Fun':'#C9A043'};
 let catAlias = (()=>{ try{ return JSON.parse(localStorage.getItem('ss_catalias')||'{}'); }catch(e){ return {}; } })();
 function catKey(cat){ return catAlias[cat] || cat; }                       // current name -> built-in name
 function catName(base){ return Object.keys(catAlias).find(k=>catAlias[k]===base) || base; } // built-in -> current name
@@ -1942,7 +1942,12 @@ function catName(base){ return Object.keys(catAlias).find(k=>catAlias[k]===base)
 // name for built-ins, so a renamed built-in keeps its color.
 let catColors = (()=>{ try{ return JSON.parse(localStorage.getItem('ss_catcolors')||'{}') || {}; }catch(e){ return {}; } })();
 let customColors = (()=>{ try{ return JSON.parse(localStorage.getItem('ss_customcolors')||'[]') || []; }catch(e){ return []; } })();
-const PALETTE = [['#6C7255','Olive'],['#541B1E','Burgundy'],['#A04C54','Rose'],['#A56F52','Terracotta'],['#C08A61','Light terracotta'],['#868B6F','Dark sage'],['#A7AB96','Sage'],['#4F5440','Deep olive']];
+// Spread out so no two look alike: greens, reds/pinks, browns/yellows, and a blue and a plum that sit well with them.
+const PALETTE = [['#6C7255','Olive'],['#A7AB96','Sage'],['#541B1E','Burgundy'],['#A04C54','Rose'],['#DDA9AB','Light rose'],
+  ['#A56F52','Terracotta'],['#D2B98F','Tan'],['#C9A043','Mustard'],['#6F8A9A','Dusty blue'],['#6E4A63','Plum'],['#4A3B32','Espresso']];
+// dark text on light colors, white on dark ones
+function inkFor(hex){ const n = parseInt(String(hex).slice(1),16); const [r,g,b] = [n>>16&255, n>>8&255, n&255].map(v=>{ v/=255; return v<=.03928 ? v/12.92 : Math.pow((v+.055)/1.055,2.4); });
+  return (0.2126*r + 0.7152*g + 0.0722*b) > 0.36 ? '#3A2E26' : '#fff'; }
 function catColor(cat){ return catColors[catKey(cat)] || BASE_CAT_COLOR[catKey(cat)] || '#A7AB96'; }
 const _ccId = cat=>{ let h = 0; const k = String(catKey(cat)); for(let i=0;i<k.length;i++) h = (h*31 + k.charCodeAt(i))|0; return 'cc-'+(h>>>0).toString(36); };
 function catClass(cat){
@@ -1955,8 +1960,8 @@ function renderCatStyles(){
   if(!el){ el = document.createElement('style'); el.id = 'cat-styles'; document.head.appendChild(el); }
   const list = (typeof allCats==='function' && typeof posts!=='undefined' && posts) ? allCats() : (cats||[]);
   el.textContent = list.map(cat=>{ const id = _ccId(cat), k = catColor(cat);
-    return `.${id} .card-stripe,.${id} .card-cat-tag{background:${k};color:#fff}
-.cat-chip.active.${id}{background:${k};border-color:${k};color:#fff}
+    return `.${id} .card-stripe,.${id} .card-cat-tag{background:${k};color:${inkFor(k)}}
+.cat-chip.active.${id}{background:${k};border-color:${k};color:${inkFor(k)}}
 .si-dot.${id}{background:${k}}`; }).join('\n');
 }
 function _storeCatColors(){ try{ localStorage.setItem('ss_catcolors', JSON.stringify(catColors)); localStorage.setItem('ss_customcolors', JSON.stringify(customColors)); }catch(e){} }
@@ -3579,7 +3584,7 @@ function copyCaption(){
 // tickets go on sale and a color; its countdown in the top bar follows it. A countdown to any
 // other day is just a countdown (fill in a ticket date and it becomes a conference).
 let _cdConf = null;   // conference key the sheet is editing, 'new' for a new conference, null for a plain countdown
-const CD_COLORS = [['#6C7255','Olive'],['#A56F52','Terracotta'],['#A04C54','Rose'],['#541B1E','Burgundy'],['#C08A61','Light terracotta'],['#868B6F','Sage']];
+const CD_COLORS = PALETTE;
 function _pickCdColor(k){
   document.getElementById('cd-color').value = k;
   const list = CD_COLORS.some(x=>x[0].toLowerCase()===String(k).toLowerCase()) ? CD_COLORS : CD_COLORS.concat([[k,'Current color']]);

@@ -37,9 +37,10 @@ no Soiree HQ, no Author Info, its own Firebase project.
   terracotta `#A56F52`, light terracotta `#C08A61`. Headings use Domine (free stand-in for SuperClarendon).
 - Top bar: `header-banner.png` (cropped from the newsletter signup banner), centered on olive.
 - App icons (`icon-*.png`, `favicon.ico`): lamp emblem on olive.
-- Default category colors: Speaker rose, Registration terracotta, Event olive, Inspiration dark sage `#868B6F`,
-  Fun light terracotta; emails burgundy. Nicole can change any category's color in Settings → Categories (tap the dot):
-  brand swatches plus her own custom colors, stored as `colors`/`custom` in `ss_meta/cats`; `renderCatStyles()` applies them.
+- Default category colors: Speaker rose, Registration terracotta, Event olive, Inspiration dusty blue `#6F8A9A`,
+  Fun mustard `#C9A043`; emails burgundy. Nicole can change any category's color in Settings → Categories (tap the dot):
+  11 distinct swatches (`PALETTE`: olive, sage, burgundy, rose, light rose, terracotta, tan, mustard, dusty blue, plum,
+  espresso; light ones get dark text via `inkFor()`) plus her own custom colors, stored as `colors`/`custom` in `ss_meta/cats`; `renderCatStyles()` applies them.
 - Conference colors are set per conference in its sheet (`renderConfStyles()`).
 
 ## Speaker posts
